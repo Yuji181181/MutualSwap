@@ -1,7 +1,5 @@
-import { userAuthenticationCheck } from "@/app/actions/userAuthenticationCheck";
-
 const Page = async () => {
- return <>hello</>
+  return <>hello</>;
 };
 
 export default Page;
