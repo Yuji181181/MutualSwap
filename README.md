@@ -26,6 +26,7 @@ docker compose up -d
 
 ```
 npx prisma migrate dev
+```
 
 ## サーバー起動
 
