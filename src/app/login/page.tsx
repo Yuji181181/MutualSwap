@@ -1,4 +1,4 @@
-import LoginForm from "../components/domain/(unauthenticated)/login/loginForm";
+import LoginForm from "../../components/domain/(unauthenticated)/login/loginForm";
 
 const LoginPage = () => {
   return <LoginForm />;
