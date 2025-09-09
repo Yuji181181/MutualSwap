@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Generate Prisma client
+        run: npx prisma generate
+
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
 
@@ -31,4 +34,4 @@ jobs:
         run: biome ci
 
       - name: TypeScript type checking
-        run: bash -c tsc --noEmit
+        run: npm run typecheck
