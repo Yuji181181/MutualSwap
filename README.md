@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 初期設定の手順
 
-## Getting Started
+## 依存関係のインストール
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+npm i
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## .envの作成と設定
 
-## Learn More
+```
+cp .env.example .env
+```
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ローカルDB起動
 
-## Deploy on Vercel
+```
+docker compose up -d
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## テーブルをDBに反映させる
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+npx prisma migrate dev
+
+## サーバー起動
+
+```
+npm run dev
+```
+
+## prisma Studio
+
+```
+npx prisma studio
+```
+
+
+
+# コミット時にエラーが出た場合
+
+コミット時にbiome check（formatとlintの確認）とtypecheck（型エラーの確認）をしています。
+
+- biome checkでエラーが出た場合は以下のコマンドを実行して、再度コミットしてください。
+- typecheckでエラーが出た場合は型エラーを直してから、再度add, commitしてください。
+
+```
+npm run  format
+```
