@@ -6,3 +6,24 @@ pre-commit:
       stage_fixed: true
     typecheck:
       run: npm run typecheck
+
+
+post-merge:
+  commands:
+    prisma-push-on-schema-change:
+      run: |
+        BASE_REF=${ORIG_HEAD:-HEAD^}
+        CHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD | tr -d '\r')
+        if echo "$CHANGED_FILES" | grep -x -q 'prisma/schema.prisma'; then
+         npx prisma migrate dev || exit 1
+        fi
+        true
+
+    prepare-on-lefthook-config-change:
+      run: |
+        BASE_REF=${ORIG_HEAD:-HEAD^}
+        CHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD | tr -d '\r')
+        if echo "$CHANGED_FILES" | grep -x -q 'lefthook.yml'; then
+          npm run prepare || exit 1
+        fi
+        true
