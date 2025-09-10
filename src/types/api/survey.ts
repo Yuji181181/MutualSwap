@@ -1,4 +1,14 @@
-import type { surveyListSchema } from "@/schemas/api/survey";
+import type {
+  surveyListSchema,
+  surveyParamsSchema,
+  surveySchema,
+  updateSurveyRequestSchema,
+  updateSurveyResponseSchema,
+} from "@/schemas/api/survey";
 import type { z } from "zod";
 
 export type SurveyList = z.infer<typeof surveyListSchema>;
+export type Survey = z.infer<typeof surveySchema>;
+export type SurveyParams = z.infer<typeof surveyParamsSchema>;
+export type UpdateSurveyRequest = z.infer<typeof updateSurveyRequestSchema>;
+export type UpdateSurveyResponse = z.infer<typeof updateSurveyResponseSchema>;
