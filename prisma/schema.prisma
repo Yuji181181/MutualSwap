@@ -8,15 +8,22 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
+  id                String   @id @default(uuid())
+  name              String   @db.VarChar(50)
+  grade             Int
+  currentPoints     Int      @default(5)
+  totalEarnedPoints Int      @default(5)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  email             String
+  emailVerified     Boolean
+  image             String?
+
+  sessions         Session[]
+  accounts         Account[]
+  Survey           Survey[]
+  SurveyResponse   SurveyResponse[]
+  PointTransaction PointTransaction[]
 
   @@unique([email])
   @@map("user")
@@ -65,4 +72,63 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+// アンケート投稿管理
+model Survey {
+  id            String    @id @default(uuid())
+  userId        String
+  title         String    @db.VarChar(200)
+  description   String?   @db.Text
+  googleFormUrl String    @db.Text
+  questionCount Int       @default(1)
+  deadline      DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  surveyResponses   SurveyResponse[]
+  pointTransactions PointTransaction[]
+
+  @@map("surveys")
+}
+
+// アンケート回答履歴管理
+model SurveyResponse {
+  id           String   @id @default(uuid())
+  userId       String
+  surveyId     String
+  pointsEarned Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  survey Survey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+
+  // user_idとsurvey_idの組み合わせは一意(重複回答防止)
+  @@unique([userId, surveyId])
+  @@map("survey_responses")
+}
+
+// ポイントの増減履歴管理
+model PointTransaction {
+  id              String          @id @default(uuid())
+  userId          String
+  surveyId        String?
+  transactionType TransactionType
+  points          Int
+  description     String?         @db.Text
+  createdAt       DateTime        @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  survey Survey? @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+
+  @@map("point_transactions")
+}
+
+enum TransactionType {
+  initial
+  earned
+  spent
 }
