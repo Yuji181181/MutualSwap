@@ -87,7 +87,7 @@ model Survey {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  user              User               @relation(fields: [userId], references: [id])
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   surveyResponses   SurveyResponse[]
   pointTransactions PointTransaction[]
 
@@ -103,8 +103,8 @@ model SurveyResponse {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  user   User   @relation(fields: [userId], references: [id])
-  survey Survey @relation(fields: [surveyId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  survey Survey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
 
   // user_idとsurvey_idの組み合わせは一意(重複回答防止)
   @@unique([userId, surveyId])
@@ -121,8 +121,8 @@ model PointTransaction {
   description     String?         @db.Text
   createdAt       DateTime        @default(now())
 
-  user   User    @relation(fields: [userId], references: [id])
-  survey Survey? @relation(fields: [surveyId], references: [id])
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  survey Survey? @relation(fields: [surveyId], references: [id], onDelete: Cascade)
 
   @@map("point_transactions")
 }
