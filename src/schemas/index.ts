@@ -1,10 +1,10 @@
+import { TransactionType } from "@prisma/client";
 import { z } from "zod";
 
 // 共通: Date の受け取りで文字列も許容
 const CoercedDateSchema = z.coerce.date();
 
-// enum: TransactionType
-export const TransactionTypeSchema = z.enum(["initial", "earned", "spent"]);
+export const TransactionTypeSchema = z.nativeEnum(TransactionType);
 
 // ============ User ============
 export const UserSchema = z.object({
