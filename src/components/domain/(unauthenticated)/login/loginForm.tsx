@@ -8,11 +8,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { authClient } from "@/lib/auth-client";
 import { ArrowRight, Users } from "lucide-react";
 
 export default function LoginForm() {
-  const handleLogin = () => {
-    // ログイン処理をここに実装
+  const handleLogin = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/dashboard",
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

@@ -15,7 +15,7 @@ post-merge:
         BASE_REF=${ORIG_HEAD:-HEAD^}
         CHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD | tr -d '\r')
         if echo "$CHANGED_FILES" | grep -x -q 'prisma/schema.prisma'; then
-         npx prisma migrate dev || exit 1
+         printf "\033[31mplease migrate\033[0m\n"
         fi
         true
 
