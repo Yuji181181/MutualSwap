@@ -77,7 +77,7 @@ model Verification {
 // アンケート投稿管理
 model Survey {
   id            String    @id @default(uuid())
-  userId        String    @default(uuid())
+  userId        String
   title         String    @db.VarChar(200)
   description   String?   @db.Text
   googleFormUrl String    @db.Text
@@ -97,8 +97,8 @@ model Survey {
 // アンケート回答履歴管理
 model SurveyResponse {
   id           String   @id @default(uuid())
-  userId       String   @default(uuid())
-  surveyId     String   @default(uuid())
+  userId       String
+  surveyId     String
   pointsEarned Int      @default(1)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -114,8 +114,8 @@ model SurveyResponse {
 // ポイントの増減履歴管理
 model PointTransaction {
   id              String          @id @default(uuid())
-  userId          String          @default(uuid())
-  surveyId        String?         @default(uuid())
+  userId          String
+  surveyId        String?
   transactionType TransactionType
   points          Int
   description     String?         @db.Text
