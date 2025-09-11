@@ -9,11 +9,13 @@ import { updateSurvey } from "../../(Repository)/update";
 
 export const PUT = async (
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) => {
   try {
+    // paramsはPromiseなのでawaitで解決
+    const resolvedParams = await params;
     // UUIDのバリデーション
-    const validatedParams = surveyParamsSchema.parse(params);
+    const validatedParams = surveyParamsSchema.parse(resolvedParams);
 
     // 編集内容のバリデーション
     const body = await request.json();
