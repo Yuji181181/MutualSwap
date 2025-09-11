@@ -1,4 +1,6 @@
 import type {
+  createSurveyRequestSchema,
+  createSurveyResponseSchema,
   surveyListSchema,
   surveyParamsSchema,
   surveySchema,
@@ -12,3 +14,5 @@ export type Survey = z.infer<typeof surveySchema>;
 export type SurveyParams = z.infer<typeof surveyParamsSchema>;
 export type UpdateSurveyRequest = z.infer<typeof updateSurveyRequestSchema>;
 export type UpdateSurveyResponse = z.infer<typeof updateSurveyResponseSchema>;
+export type CreateSurveyRequest = z.infer<typeof createSurveyRequestSchema>;
+export type CreateSurveyResponse = z.infer<typeof createSurveyResponseSchema>;
