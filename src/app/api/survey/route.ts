@@ -1,6 +1,6 @@
-import { createSurveyRequestSchema } from "@/schemas/api/survey";
+import { createSurveyRequestSchema } from "@/schemas/api/create";
 import type { ResBody } from "@/types/api";
-import type { CreateSurveyResponse, SurveyList } from "@/types/api/survey";
+import type { Survey, SurveyList } from "@/types/api/survey";
 import { NextResponse } from "next/server";
 import { createSurvey } from "../(Repository)/create";
 import { getSurveys } from "../(Repository)/survey";
@@ -55,7 +55,7 @@ export const POST = async (request: Request) => {
       createData,
     ); //本当は session.user.id を使う
 
-    return NextResponse.json<ResBody<CreateSurveyResponse>>(
+    return NextResponse.json<ResBody<Survey>>(
       { message: "Survey created successfully", data: survey },
       { status: 201 },
     );

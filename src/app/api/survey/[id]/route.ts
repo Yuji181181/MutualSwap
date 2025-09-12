@@ -1,9 +1,7 @@
-import {
-  surveyParamsSchema,
-  updateSurveyRequestSchema,
-} from "@/schemas/api/survey";
+import { surveyParamsSchema } from "@/schemas/api/survey";
+import { updateSurveyRequestSchema } from "@/schemas/api/update";
 import type { ResBody } from "@/types/api";
-import type { Survey, UpdateSurveyResponse } from "@/types/api/survey";
+import type { Survey } from "@/types/api/survey";
 import { NextResponse } from "next/server";
 import { getSurveyById } from "../../(Repository)/read";
 import { updateSurvey } from "../../(Repository)/update";
@@ -65,7 +63,7 @@ export const PUT = async (
 
     const survey = await updateSurvey(validatedParams.id, updateData);
 
-    return NextResponse.json<ResBody<UpdateSurveyResponse>>(
+    return NextResponse.json<ResBody<Survey>>(
       { message: "Success", data: survey },
       { status: 200 },
     );
