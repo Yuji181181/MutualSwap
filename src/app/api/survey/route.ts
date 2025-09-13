@@ -41,10 +41,17 @@ export const POST = async (request: Request) => {
 
     // リクエストボディのバリデーション
     const body = await request.json();
-    const validatedBody = createSurveyRequestSchema.parse(body);
+    const validationResult = createSurveyRequestSchema.safeParse(body);
+
+    if (!validationResult.success) {
+      return NextResponse.json<ResBody<undefined>>(
+        { message: "Bad Request" },
+        { status: 400 },
+      );
+    }
 
     // 認証されたユーザーのIDを使用
-    const survey = await createSurvey(session.user.id, validatedBody);
+    const survey = await createSurvey(session.user.id, validationResult.data);
 
     return NextResponse.json<ResBody<Survey>>(
       { message: "Success", data: survey },

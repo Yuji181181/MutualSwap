@@ -16,9 +16,16 @@ export const GET = async (
     const resolvedParams = await params;
 
     // パラメータのバリデーション
-    const validatedParams = surveyParamsSchema.parse(resolvedParams);
+    const paramsValidationResult = surveyParamsSchema.safeParse(resolvedParams);
 
-    const survey = await getSurveyById(validatedParams.id);
+    if (!paramsValidationResult.success) {
+      return NextResponse.json<ResBody<undefined>>(
+        { message: "Bad Request" },
+        { status: 400 },
+      );
+    }
+
+    const survey = await getSurveyById(paramsValidationResult.data.id);
 
     if (!survey) {
       return NextResponse.json<ResBody<undefined>>(
@@ -60,10 +67,17 @@ export const PUT = async (
 
     const resolvedParams = await params;
     // UUIDのバリデーション
-    const validatedParams = surveyParamsSchema.parse(resolvedParams);
+    const paramsValidationResult = surveyParamsSchema.safeParse(resolvedParams);
+
+    if (!paramsValidationResult.success) {
+      return NextResponse.json<ResBody<undefined>>(
+        { message: "Bad Request" },
+        { status: 400 },
+      );
+    }
 
     // 所有者チェック
-    const existingSurvey = await getSurveyById(validatedParams.id);
+    const existingSurvey = await getSurveyById(paramsValidationResult.data.id);
 
     if (!existingSurvey) {
       return NextResponse.json<ResBody<undefined>>(
@@ -82,9 +96,19 @@ export const PUT = async (
 
     // 編集内容のバリデーション
     const body = await request.json();
-    const validatedBody = updateSurveyRequestSchema.parse(body);
+    const bodyValidationResult = updateSurveyRequestSchema.safeParse(body);
 
-    const survey = await updateSurvey(validatedParams.id, validatedBody);
+    if (!bodyValidationResult.success) {
+      return NextResponse.json<ResBody<undefined>>(
+        { message: "Bad Request" },
+        { status: 400 },
+      );
+    }
+
+    const survey = await updateSurvey(
+      paramsValidationResult.data.id,
+      bodyValidationResult.data,
+    );
 
     return NextResponse.json<ResBody<Survey>>(
       { message: "Success", data: survey },
