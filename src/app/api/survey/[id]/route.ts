@@ -1,13 +1,15 @@
+import { auth } from "@/auth";
 import { surveyParamsSchema } from "@/schemas/api/survey";
 import { updateSurveyRequestSchema } from "@/schemas/api/update";
 import type { ResBody } from "@/types/api";
 import type { Survey } from "@/types/api/survey";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { getSurveyById } from "../../(Repository)/read";
 import { updateSurvey } from "../../(Repository)/update";
 
 export const GET = async (
-  _request: Request, // requestは認証で使うかもなので_request
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) => {
   try {
@@ -44,9 +46,39 @@ export const PUT = async (
   { params }: { params: Promise<{ id: string }> },
 ) => {
   try {
+    // 認証チェック
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) {
+      return NextResponse.json<ResBody<undefined>>(
+        { message: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
     const resolvedParams = await params;
     // UUIDのバリデーション
     const validatedParams = surveyParamsSchema.parse(resolvedParams);
+
+    // 所有者チェック
+    const existingSurvey = await getSurveyById(validatedParams.id);
+
+    if (!existingSurvey) {
+      return NextResponse.json<ResBody<undefined>>(
+        { message: "Survey not found" },
+        { status: 404 },
+      );
+    }
+
+    // 編集権限チェック
+    if (existingSurvey.userId !== session.user.id) {
+      return NextResponse.json<ResBody<undefined>>(
+        { message: "Forbidden: You can only edit your own surveys" },
+        { status: 403 },
+      );
+    }
 
     // 編集内容のバリデーション
     const body = await request.json();
