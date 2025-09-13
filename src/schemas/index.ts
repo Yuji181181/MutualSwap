@@ -10,12 +10,10 @@ export const TransactionTypeSchema = z.nativeEnum(TransactionType);
 export const UserSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(50),
-  grade: z.number().int(),
-  image: z.string().min(1).optional(),
-  currentPoints: z.number().int().nonnegative().optional(),
-  totalEarnedPoints: z.number().int().nonnegative().optional(),
-  createdAt: CoercedDateSchema,
-  updatedAt: CoercedDateSchema,
+  grade: z.number().int().nullable(),
+  image: z.string().min(1).nullable(),
+  currentPoints: z.number().int().nonnegative(),
+  totalEarnedPoints: z.number().int().nonnegative(),
 });
 
 // ============ Survey ============

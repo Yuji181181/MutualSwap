@@ -2,8 +2,7 @@
 
 import { useUser } from "@/app/actions/useUser";
 import { userAuthenticationCheck } from "@/app/actions/userAuthenticationCheck";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { UserDropdown } from "@/components/common/UserDropdown";
 import { Separator } from "@/components/ui/separator";
 import { Coins, Users } from "lucide-react";
 
@@ -24,7 +23,7 @@ export default async function Header() {
             </h1>
           </div>
 
-          {user ? (
+          {user && (
             <div className="flex items-center gap-4">
               {/* ポイント表示 */}
               <div className="flex items-center gap-2 rounded-lg bg-secondary/10 px-3 py-2">
@@ -36,22 +35,8 @@ export default async function Header() {
 
               <div className="flex items-center gap-3">
                 <Separator orientation="vertical" className="h-8" />
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage
-                      src={user.image || undefined}
-                      alt={user.name || "ユーザー"}
-                    />
-                    <AvatarFallback className="text-sm" />
-                  </Avatar>
-                </div>
+                <UserDropdown user={user} />
               </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-4">
-              <Button variant="outline" asChild>
-                <a href="/login">ログイン</a>
-              </Button>
             </div>
           )}
         </div>
