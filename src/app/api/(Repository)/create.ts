@@ -1,18 +1,19 @@
 import { prisma } from "@/lib/prisma";
+import type { CreateSurveyRequest } from "@/types/api/survey";
 
 export const createSurvey = async (
   userId: string,
-  data: {
-    title: string;
-    description?: string;
-    googleFormUrl: string;
-    questionCount: number;
-    deadline?: Date;
-  },
+  data: CreateSurveyRequest,
 ) => {
+  // deadlineをDate型に変換
+  const processedData = {
+    ...data,
+    deadline: data.deadline ? new Date(data.deadline) : undefined,
+  };
+
   const survey = await prisma.survey.create({
     data: {
-      ...data,
+      ...processedData,
       userId,
       isActive: true,
     },

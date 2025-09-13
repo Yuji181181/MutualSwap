@@ -1,20 +1,17 @@
 import { prisma } from "@/lib/prisma";
+import type { UpdateSurveyRequest } from "@/types/api/survey";
 
-export const updateSurvey = async (
-  id: string,
-  data: {
-    title?: string;
-    description?: string;
-    googleFormUrl?: string;
-    questionCount?: number;
-    deadline?: Date;
-    isActive?: boolean;
-  },
-) => {
+export const updateSurvey = async (id: string, data: UpdateSurveyRequest) => {
+  // deadlineをDate型に変換
+  const processedData = {
+    ...data,
+    deadline: data.deadline ? new Date(data.deadline) : undefined,
+  };
+
   const updatedSurvey = await prisma.survey.update({
     where: { id },
     data: {
-      ...data,
+      ...processedData,
       updatedAt: new Date(),
     },
     include: {

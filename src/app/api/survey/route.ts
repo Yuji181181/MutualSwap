@@ -41,22 +41,14 @@ export const POST = async (request: Request) => {
     const body = await request.json();
     const validatedBody = createSurveyRequestSchema.parse(body);
 
-    // deadlineが文字列の場合はDateオブジェクトに変換
-    const createData = {
-      ...validatedBody,
-      deadline: validatedBody.deadline
-        ? new Date(validatedBody.deadline)
-        : undefined,
-    };
-
     // テスト用の固定ユーザーID (UUID形式)
     const survey = await createSurvey(
       "eda1423b-90e6-498e-a1cd-f1e8eee0725f",
-      createData,
+      validatedBody,
     ); //本当は session.user.id を使う
 
     return NextResponse.json<ResBody<Survey>>(
-      { message: "Survey created successfully", data: survey },
+      { message: "Success", data: survey },
       { status: 201 },
     );
   } catch (error) {

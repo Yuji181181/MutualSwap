@@ -11,12 +11,11 @@ export const GET = async (
   { params }: { params: Promise<{ id: string }> },
 ) => {
   try {
-    // paramsはPromiseなのでawaitで解決
     const resolvedParams = await params;
+
     // パラメータのバリデーション
     const validatedParams = surveyParamsSchema.parse(resolvedParams);
 
-    // 投稿詳細を取得
     const survey = await getSurveyById(validatedParams.id);
 
     if (!survey) {
@@ -45,7 +44,6 @@ export const PUT = async (
   { params }: { params: Promise<{ id: string }> },
 ) => {
   try {
-    // paramsはPromiseなのでawaitで解決
     const resolvedParams = await params;
     // UUIDのバリデーション
     const validatedParams = surveyParamsSchema.parse(resolvedParams);
@@ -54,14 +52,7 @@ export const PUT = async (
     const body = await request.json();
     const validatedBody = updateSurveyRequestSchema.parse(body);
 
-    const updateData = {
-      ...validatedBody,
-      deadline: validatedBody.deadline
-        ? new Date(validatedBody.deadline)
-        : undefined,
-    };
-
-    const survey = await updateSurvey(validatedParams.id, updateData);
+    const survey = await updateSurvey(validatedParams.id, validatedBody);
 
     return NextResponse.json<ResBody<Survey>>(
       { message: "Success", data: survey },
