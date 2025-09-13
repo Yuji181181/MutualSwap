@@ -16,5 +16,5 @@ export async function userAuthenticationCheck() {
 
   if (!session) redirect("/login");
 
-  return true;
+  return session.user.id;
 }
