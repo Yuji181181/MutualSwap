@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
-export const getPointsHistory = async () => {
+export const getPointsHistory = async (id: string) => {
   const pointsHistory = await prisma.pointTransaction.findMany({
+    where: { userId: id },
     orderBy: { createdAt: "desc" },
     include: {
       user: {

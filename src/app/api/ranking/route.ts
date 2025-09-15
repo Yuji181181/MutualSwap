@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getUserRankingData } from "../../(Repository)/user";
+import { getUserRankingData } from "../(Repository)/user";
 
 export async function GET() {
   try {
@@ -7,6 +7,9 @@ export async function GET() {
     return NextResponse.json(users, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: "not found" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

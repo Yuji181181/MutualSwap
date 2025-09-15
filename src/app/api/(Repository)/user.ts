@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 export const getUserRankingData = async () => {
   const users = await prisma.user.findMany({
     orderBy: { totalEarnedPoints: "desc" },
-    take: 10,
+    take: 100,
     select: {
       id: true,
       name: true,
