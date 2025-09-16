@@ -5,7 +5,7 @@ export const pointHistorySchema = z.array(
     id: z.string(),
     userId: z.string(),
     surveyId: z.string().nullable(),
-    transactionType: z.enum(["EARNED", "REDEEMED"]),
+    transactionType: z.enum(["initial", "earned", "spent"]),
     points: z.number(),
     description: z.string().nullable(),
     createdAt: z.date(),
