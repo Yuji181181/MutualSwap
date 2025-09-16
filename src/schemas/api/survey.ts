@@ -19,3 +19,7 @@ export const surveyListSchema = z.array(
     }),
   }),
 );
+
+export const surveyParamsSchema = z.object({
+  id: z.string().uuid(),
+});
