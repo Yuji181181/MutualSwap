@@ -3,7 +3,8 @@ import type { ResBody } from "@/types/api";
 import type { DeleteSurveyResponse } from "@/types/api/survey";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { deleteSurvey, getSurveyById } from "../../(Repository)/survey";
+import { deleteSurvey } from "../../(Repository)/deleteSurvey";
+import { getSurveyById } from "../../(Repository)/survey";
 
 export async function DELETE(
   _request: Request,
