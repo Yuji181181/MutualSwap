@@ -15,3 +15,10 @@ const ExampleComponent:React.FC<ExampleComponentProps> = (props) => {
   return <div>{props.name}</div>;
 };
 ```
+
+- 必ずデータフェッチにはuseSWRを使用してください。
+
+- 必ずフォームを作成する場合はReact Hook FormとShadcnを組み合わせて作成してください。React Hook FormではZodResolverを使用してください。
+
+- ロジック層をカスタムフックに分離してください。
+
