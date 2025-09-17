@@ -11,21 +11,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
   ExternalLink,
   Heart,
   MessageCircle,
-  Plus,
   Trophy,
   Users,
 } from "lucide-react";
@@ -90,41 +78,52 @@ const mockSurveys: Survey[] = [
     category: "テクノロジー",
     createdAt: "2024-01-13",
   },
+  {
+    id: "4",
+    title: "スマートフォンアプリの使用習慣",
+    description: "モバイルアプリの利用パターンに関する調査です。",
+    url: "https://forms.google.com/example3",
+    author: "山田次郎",
+    authorAvatar: "/japanese-businessman.png",
+    points: 100,
+    responses: 203,
+    likes: 41,
+    comments: 12,
+    category: "テクノロジー",
+    createdAt: "2024-01-13",
+  },
+  {
+    id: "5",
+    title: "スマートフォンアプリの使用習慣",
+    description: "モバイルアプリの利用パターンに関する調査です。",
+    url: "https://forms.google.com/example3",
+    author: "山田次郎",
+    authorAvatar: "/japanese-businessman.png",
+    points: 100,
+    responses: 203,
+    likes: 41,
+    comments: 12,
+    category: "テクノロジー",
+    createdAt: "2024-01-13",
+  },
+  {
+    id: "6",
+    title: "スマートフォンアプリの使用習慣",
+    description: "モバイルアプリの利用パターンに関する調査です。",
+    url: "https://forms.google.com/example3",
+    author: "山田次郎",
+    authorAvatar: "/japanese-businessman.png",
+    points: 100,
+    responses: 203,
+    likes: 41,
+    comments: 12,
+    category: "テクノロジー",
+    createdAt: "2024-01-13",
+  },
 ];
 
 export default function TopPage() {
   const [surveys, setSurveys] = useState<Survey[]>(mockSurveys);
-  const [userPoints, setUserPoints] = useState(250);
-  const [newSurvey, setNewSurvey] = useState({
-    title: "",
-    description: "",
-    url: "",
-    category: "",
-  });
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const handleSubmitSurvey = () => {
-    if (newSurvey.title && newSurvey.url) {
-      const survey: Survey = {
-        id: Date.now().toString(),
-        title: newSurvey.title,
-        description: newSurvey.description,
-        url: newSurvey.url,
-        author: "あなた",
-        authorAvatar: "/diverse-user-avatars.png",
-        points: 25,
-        responses: 0,
-        likes: 0,
-        comments: 0,
-        category: newSurvey.category || "その他",
-        createdAt: new Date().toISOString().split("T")[0],
-      };
-      setSurveys([survey, ...surveys]);
-      setUserPoints(userPoints + 25);
-      setNewSurvey({ title: "", description: "", url: "", category: "" });
-      setIsDialogOpen(false);
-    }
-  };
 
   const handleLike = (surveyId: string) => {
     setSurveys(
@@ -134,7 +133,6 @@ export default function TopPage() {
           : survey,
       ),
     );
-    setUserPoints(userPoints + 5);
   };
 
   const handleResponse = (surveyId: string) => {
@@ -145,111 +143,10 @@ export default function TopPage() {
           : survey,
       ),
     );
-    setUserPoints(userPoints + 10);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Users className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <h1 className="font-bold text-2xl text-foreground">
-                アンケート共有掲示板
-              </h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 rounded-lg bg-secondary/10 px-3 py-2">
-                <Trophy className="h-5 w-5 text-secondary" />
-                <span className="font-semibold text-foreground">
-                  {userPoints}pt
-                </span>
-              </div>
-              <Button variant="outline" asChild>
-                <a href="/login">ログイン</a>
-              </Button>
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    アンケート投稿
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>新しいアンケートを投稿</DialogTitle>
-                    <DialogDescription>
-                      Google
-                      Formのアンケートを共有して、コミュニティからの回答を集めましょう。
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="title">タイトル</Label>
-                      <Input
-                        id="title"
-                        value={newSurvey.title}
-                        onChange={(e) =>
-                          setNewSurvey({ ...newSurvey, title: e.target.value })
-                        }
-                        placeholder="アンケートのタイトルを入力"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="description">説明</Label>
-                      <Textarea
-                        id="description"
-                        value={newSurvey.description}
-                        onChange={(e) =>
-                          setNewSurvey({
-                            ...newSurvey,
-                            description: e.target.value,
-                          })
-                        }
-                        placeholder="アンケートの詳細を説明してください"
-                        rows={3}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="url">Google Form URL</Label>
-                      <Input
-                        id="url"
-                        value={newSurvey.url}
-                        onChange={(e) =>
-                          setNewSurvey({ ...newSurvey, url: e.target.value })
-                        }
-                        placeholder="https://forms.google.com/..."
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="category">カテゴリー</Label>
-                      <Input
-                        id="category"
-                        value={newSurvey.category}
-                        onChange={(e) =>
-                          setNewSurvey({
-                            ...newSurvey,
-                            category: e.target.value,
-                          })
-                        }
-                        placeholder="例: ライフスタイル、テクノロジー"
-                      />
-                    </div>
-                    <Button onClick={handleSubmitSurvey} className="w-full">
-                      投稿する (+25pt)
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         {/* Survey List */}

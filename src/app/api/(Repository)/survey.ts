@@ -16,3 +16,10 @@ export const getSurveys = async () => {
   });
   return surveys;
 };
+
+export const getSurveyById = async (id: string) => {
+  const survey = await prisma.survey.findUnique({
+    where: { id },
+  });
+  return survey;
+};
