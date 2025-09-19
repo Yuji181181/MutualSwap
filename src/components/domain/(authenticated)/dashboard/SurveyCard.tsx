@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +12,7 @@ import {
 import { formatDate } from "@/lib/formatter";
 import type { surveyListSchema } from "@/schemas/api/survey";
 import { ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
 import type React from "react";
 import type { z } from "zod";
 
@@ -18,8 +21,14 @@ interface SurveyCardProps {
 }
 
 export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
+  const router = useRouter();
   return (
-    <Card key={props.survey.id} className="transition-shadow hover:shadow-lg">
+    <Card
+      key={props.survey.id}
+      className="cursor-pointer transition-shadow hover:shadow-lg"
+      onClick={() => router.push(`/survey/${props.survey.id}`)}
+      tabIndex={0}
+    >
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -27,24 +36,16 @@ export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
               <AvatarImage
                 src={props.survey.user.image ?? "/placeholder.svg"}
               />
-              <AvatarFallback>
-                {props.survey.user.name ? props.survey.user.name[0] : "U"}
-              </AvatarFallback>
+              <AvatarFallback />
             </Avatar>
             <div>
               <CardTitle className="text-balance text-lg">
-                <a
-                  href={`/survey/${props.survey.id}`}
-                  className="transition-colors hover:text-primary"
-                >
-                  {props.survey.title}
-                </a>
+                <span>{props.survey.title}</span>
               </CardTitle>
               <div className="mt-1 flex items-center gap-2">
                 <span className="text-muted-foreground text-sm">
                   {props.survey.user.name}
                 </span>
-                <span className="text-muted-foreground text-xs">•</span>
                 <span className="text-muted-foreground text-xs">
                   {formatDate(props.survey.createdAt)}
                 </span>
@@ -67,7 +68,8 @@ export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
           <div className="flex items-center gap-2">
             <Button
               size="sm"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 window.open(props.survey.googleFormUrl, "_blank");
               }}
               className="gap-1"
