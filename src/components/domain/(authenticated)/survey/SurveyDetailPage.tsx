@@ -11,8 +11,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useSurveyDetailPage } from "@/hooks/domain/(authenticated)/useSurveyDetailPage";
+import { authClient } from "@/lib/auth-client";
 import { formatDate } from "@/lib/formatter";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Pencil } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import type React from "react";
 
 interface SurveyDetailPageProps {
@@ -21,6 +23,10 @@ interface SurveyDetailPageProps {
 
 export const SurveyDetailPage: React.FC<SurveyDetailPageProps> = (props) => {
   const { survey, isLoading, isError } = useSurveyDetailPage({ id: props.id });
+  const { data: session } = authClient.useSession();
+  const searchParams = useSearchParams();
+  const created = searchParams?.get("created") === "1";
+  const updated = searchParams?.get("updated") === "1";
 
   if (isError) {
     return (
@@ -54,6 +60,11 @@ export const SurveyDetailPage: React.FC<SurveyDetailPageProps> = (props) => {
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
+        {(created || updated) && (
+          <div className="mx-auto mb-4 w-full max-w-2xl rounded-md border border-emerald-300/60 bg-emerald-50 px-4 py-2 text-emerald-700 text-sm">
+            {created ? "投稿を作成しました。" : "投稿を更新しました。"}
+          </div>
+        )}
         <Card className="transition-shadow hover:shadow-lg">
           <CardHeader>
             <div className="flex items-start justify-between">
@@ -93,10 +104,24 @@ export const SurveyDetailPage: React.FC<SurveyDetailPageProps> = (props) => {
               <Button
                 onClick={() => window.open(survey.googleFormUrl, "_blank")}
                 className="gap-1"
+                title="Googleフォームを新しいタブで開く"
               >
                 <ExternalLink className="h-4 w-4" />
                 回答する
               </Button>
+              {session?.user?.id === survey.user.id && (
+                <Button
+                  variant="outline"
+                  className="gap-1"
+                  title="この投稿を編集"
+                  onClick={() => {
+                    window.location.href = `/survey/${survey.id}/edit`;
+                  }}
+                >
+                  <Pencil className="h-4 w-4" />
+                  編集
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>

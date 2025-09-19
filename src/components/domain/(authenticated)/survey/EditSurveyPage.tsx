@@ -11,41 +11,37 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { HttpError } from "@/hooks/common/useCustomizedSWR";
+import { useSurveyDetailPage } from "@/hooks/domain/(authenticated)/useSurveyDetailPage";
+import { updateSurveyRequestSchema } from "@/schemas/api/update";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useCallback, useState } from "react";
-
-import { createSurveyRequestSchema } from "@/schemas/api/create";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-// ISO文字列に正規化
+interface EditSurveyPageProps {
+  id: string;
+}
+
 const normalizeDeadlineToISO = (value: unknown): string | undefined => {
   if (typeof value !== "string") return undefined;
   const raw = value.trim();
   if (!raw) return undefined;
-  let candidate = raw;
-  // 例: 2025/10/31 06:00 -> 2025-10-31T06:00
-  if (candidate.includes("/")) {
-    candidate = candidate.replaceAll("/", "-");
-  }
+  let candidate = raw.replaceAll("/", "-");
   if (candidate.includes(" ") && !candidate.includes("T")) {
     candidate = candidate.replace(" ", "T");
   }
-  // DateにパースしてISOへ
   const d = new Date(candidate);
-  if (!Number.isNaN(d.getTime())) {
-    return d.toISOString();
-  }
-  // 既にISOならそのまま
+  if (!Number.isNaN(d.getTime())) return d.toISOString();
   if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?Z$/.test(raw)) {
     return raw;
   }
   return undefined;
 };
 
-const formSchema = createSurveyRequestSchema.extend({
+const formSchema = updateSurveyRequestSchema.extend({
   deadline: z
     .preprocess((v) => normalizeDeadlineToISO(v), z.string().datetime())
     .optional(),
@@ -53,38 +49,69 @@ const formSchema = createSurveyRequestSchema.extend({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const NewSurveyPage: React.FC = () => {
+const toLocalInputValue = (
+  date: Date | null | undefined,
+): string | undefined => {
+  if (!date) return undefined;
+  const d = new Date(date);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  const mm = pad(d.getMonth() + 1);
+  const dd = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mi = pad(d.getMinutes());
+  return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+};
+
+export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
   const router = useRouter();
+  const { survey, isLoading, isError, error } = useSurveyDetailPage({
+    id: props.id,
+  });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      googleFormUrl: "",
-      questionCount: 1,
-      deadline: undefined,
-    },
   });
+
+  const defaults = useMemo(() => {
+    if (!survey) return undefined;
+    return {
+      title: survey.title,
+      description: survey.description ?? "",
+      googleFormUrl: survey.googleFormUrl,
+      questionCount: survey.questionCount,
+      deadline: toLocalInputValue(survey.deadline ?? undefined),
+      isActive: survey.isActive,
+    } satisfies Partial<FormValues> as FormValues;
+  }, [survey]);
+
+  useEffect(() => {
+    if (defaults) reset(defaults);
+  }, [defaults, reset]);
 
   const onSubmit = useCallback(
     async (values: FormValues) => {
       try {
         setSubmitting(true);
         setSubmitError(null);
+
         const payload: FormValues = {
           ...values,
-          // datetime-localをISO に変換
-          deadline: values.deadline ?? undefined,
+          deadline:
+            typeof values.deadline === "string" && values.deadline.trim() === ""
+              ? undefined
+              : values.deadline,
         };
-        const res = await fetch("/api/survey", {
-          method: "POST",
+
+        const res = await fetch(`/api/survey/${props.id}`, {
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify(payload),
@@ -93,40 +120,68 @@ const NewSurveyPage: React.FC = () => {
           const text = await res.text();
           throw new Error(`Failed: ${res.status} ${text}`);
         }
-        const json = (await res.json()) as { data?: { id: string } };
-        const id = json?.data?.id;
-        if (id) {
-          router.push(`/survey/${id}?created=1`);
-        } else {
-          router.push("/dashboard");
-        }
+        router.push(`/survey/${props.id}?updated=1`);
       } catch (e) {
         console.error(e);
         setSubmitError(
-          e instanceof Error
-            ? e.message
-            : "送信中にエラーが発生しました。時間をおいて再度お試しください。",
+          e instanceof Error ? e.message : "更新中にエラーが発生しました。",
         );
       } finally {
         setSubmitting(false);
       }
     },
-    [router],
+    [props.id, router],
   );
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-background">
+        <main className="container mx-auto px-4 py-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-balance text-lg">エラー</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription>
+                {(() => {
+                  const status =
+                    error instanceof HttpError ? error.status : undefined;
+                  if (status === 404) return "対象の投稿が見つかりません。";
+                  if (status === 403)
+                    return "この投稿を編集する権限がありません。";
+                  if (status === 401) return "ログインが必要です。";
+                  return "データの取得に失敗しました。時間をおいて再度お試しください。";
+                })()}
+              </CardDescription>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
+
+  if (isLoading || !survey) {
+    return (
+      <div className="min-h-screen bg-background">
+        <main className="container mx-auto px-4 py-8">
+          <Card className="mx-auto w-full max-w-2xl">
+            <CardHeader>
+              <CardTitle>読み込み中...</CardTitle>
+              <CardDescription>編集フォームを準備しています。</CardDescription>
+            </CardHeader>
+          </Card>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
         <Card className="mx-auto w-full max-w-2xl">
           <CardHeader>
-            <CardTitle>新規投稿</CardTitle>
-            <CardDescription>
-              アンケートの内容を入力してください。
-              <br />
-              <span className="text-muted-foreground">
-                タイトル・URL・設問数は必須です。
-              </span>
-            </CardDescription>
+            <CardTitle>投稿を編集</CardTitle>
+            <CardDescription>内容を更新して保存してください。</CardDescription>
           </CardHeader>
           <CardContent>
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -135,20 +190,15 @@ const NewSurveyPage: React.FC = () => {
                   {submitError}
                 </div>
               )}
+
               <div className="space-y-2">
-                <Label htmlFor="title">
-                  タイトル <span className="text-destructive">*</span>
-                </Label>
+                <Label htmlFor="title">タイトル</Label>
                 <Input
-                  className="border-black/30"
                   id="title"
-                  placeholder="アンケートのタイトル"
+                  className="border-black/30"
                   aria-invalid={!!errors.title}
                   {...register("title")}
                 />
-                <p className="text-muted-foreground text-xs">
-                  わかりやすいタイトルを入力してください（200文字以内）。
-                </p>
                 {errors.title && (
                   <p className="text-destructive text-sm">
                     {errors.title.message}
@@ -162,7 +212,6 @@ const NewSurveyPage: React.FC = () => {
                   id="description"
                   rows={6}
                   className="min-h-32 border border-black/30 text-base leading-relaxed focus:border-black/50 focus-visible:ring-black/30"
-                  placeholder="アンケートの目的や内容、回答者への補足などを記載（任意）"
                   aria-invalid={!!errors.description}
                   {...register("description")}
                 />
@@ -174,20 +223,14 @@ const NewSurveyPage: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="googleFormUrl">
-                  GoogleフォームURL <span className="text-destructive">*</span>
-                </Label>
+                <Label htmlFor="googleFormUrl">GoogleフォームURL</Label>
                 <Input
-                  className="border-black/30"
                   id="googleFormUrl"
+                  className="border-black/30"
                   type="url"
-                  placeholder="https://docs.google.com/forms/..."
                   aria-invalid={!!errors.googleFormUrl}
                   {...register("googleFormUrl")}
                 />
-                <p className="text-muted-foreground text-xs">
-                  フォームの公開リンクを貼り付けてください。
-                </p>
                 {errors.googleFormUrl && (
                   <p className="text-destructive text-sm">
                     {errors.googleFormUrl.message}
@@ -196,23 +239,17 @@ const NewSurveyPage: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="questionCount">
-                  設問数 <span className="text-destructive">*</span>
-                </Label>
+                <Label htmlFor="questionCount">設問数</Label>
                 <Input
-                  className="border-black/30"
                   id="questionCount"
+                  className="border-black/30"
                   type="number"
                   inputMode="numeric"
                   min={1}
                   step={1}
-                  placeholder="例: 10"
                   aria-invalid={!!errors.questionCount}
                   {...register("questionCount", { valueAsNumber: true })}
                 />
-                <p className="text-muted-foreground text-xs">
-                  Googleフォームのアンケートの設問数を入力してください。
-                </p>
                 {errors.questionCount && (
                   <p className="text-destructive text-sm">
                     {errors.questionCount.message}
@@ -223,8 +260,8 @@ const NewSurveyPage: React.FC = () => {
               <div className="space-y-2">
                 <Label htmlFor="deadline">締切（任意）</Label>
                 <Input
-                  className="border-black/30"
                   id="deadline"
+                  className="border-black/30"
                   type="datetime-local"
                   aria-invalid={!!errors.deadline}
                   {...register("deadline", {
@@ -248,7 +285,7 @@ const NewSurveyPage: React.FC = () => {
                   キャンセル
                 </Button>
                 <Button type="submit" disabled={submitting}>
-                  {submitting ? "送信中..." : "投稿する"}
+                  {submitting ? "保存中..." : "保存する"}
                 </Button>
               </div>
             </form>
@@ -259,4 +296,4 @@ const NewSurveyPage: React.FC = () => {
   );
 };
 
-export default NewSurveyPage;
+export default EditSurveyPage;

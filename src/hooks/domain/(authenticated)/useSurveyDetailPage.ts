@@ -8,7 +8,7 @@ interface UseSurveyDetailPageArgs {
 }
 
 export const useSurveyDetailPage = (props: UseSurveyDetailPageArgs) => {
-  const { data, isLoading, isError, mutate } = useCustomizedSWR(
+  const { data, isLoading, isError, error, mutate } = useCustomizedSWR(
     `/api/survey/${props.id}`,
     surveySchema,
   );
@@ -17,6 +17,7 @@ export const useSurveyDetailPage = (props: UseSurveyDetailPageArgs) => {
     survey: data,
     isLoading,
     isError,
+    error,
     mutate,
   } as const;
 };
