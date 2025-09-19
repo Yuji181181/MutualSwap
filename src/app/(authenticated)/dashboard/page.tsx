@@ -1,7 +1,7 @@
-import TopPage from "@/components/domain/(authenticated)/dashboard/TopPage";
+import DashboardPage from "@/components/domain/(authenticated)/dashboard/DashboardPage";
 
 const Page = async () => {
-  return <TopPage />;
+  return <DashboardPage />;
 };
 
 export default Page;

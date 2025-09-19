@@ -50,9 +50,7 @@ export const UserDropdown: React.FC<UserDropdownProps> = (props) => {
             src={props.user.image || undefined}
             alt={props.user.name || "ユーザー"}
           />
-          <AvatarFallback className="text-sm">
-            {props.user.name ? props.user.name.charAt(0).toUpperCase() : "U"}
-          </AvatarFallback>
+          <AvatarFallback />
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

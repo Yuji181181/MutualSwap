@@ -5,9 +5,11 @@ import { userAuthenticationCheck } from "@/app/actions/userAuthenticationCheck";
 import { UserDropdown } from "@/components/common/UserDropdown";
 import { Separator } from "@/components/ui/separator";
 import { Coins, Users } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default async function Header() {
   const userId = await userAuthenticationCheck();
+  if (!userId) redirect("/login");
   const user = await useUser(userId);
 
   return (
