@@ -5,8 +5,8 @@ import { headers } from "next/headers";
 
 /**
  * ユーザーが認証されているかどうかを確認する
- * 認証されていない場合は/loginにリダイレクトする
- * 認証されている場合はtrueを返す
+ * 認証されていない場合はfalseを返す
+ * 認証されている場合はユーザーのIDを返す
  */
 export async function userAuthenticationCheck() {
   const session = await auth.api.getSession({
