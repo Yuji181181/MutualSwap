@@ -1,5 +1,4 @@
 import "@/app/globals.css";
-import Header from "@/components/common/Header";
 import type { Metadata } from "next";
 import type React from "react";
 
@@ -13,10 +12,7 @@ type RootLayoutProps = {
 };
 const RootLayout: React.FC<RootLayoutProps> = (props) => (
   <html lang="en">
-    <body className="bg-background">
-      <Header />
-      {props.children}
-    </body>
+    <body className="bg-background">{props.children}</body>
   </html>
 );
 

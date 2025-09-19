@@ -2,7 +2,6 @@
 
 import { auth } from "@/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 /**
  * ユーザーが認証されているかどうかを確認する
@@ -14,7 +13,7 @@ export async function userAuthenticationCheck() {
     headers: await headers(), // you need to pass the headers object.
   });
 
-  if (!session) redirect("/login");
+  if (!session) return false;
 
   return session.user.id;
 }
