@@ -14,7 +14,7 @@ export const SurveyCardSkeleton: React.FC = () => {
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-10 w-10 rounded-full" />
             <div>
               <CardTitle className="text-balance text-lg">
                 <Skeleton className="h-5 w-48" />

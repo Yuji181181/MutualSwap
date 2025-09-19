@@ -23,7 +23,7 @@ export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <Avatar>
+            <Avatar className="size-10">
               <AvatarImage
                 src={props.survey.user.image ?? "/placeholder.svg"}
               />
