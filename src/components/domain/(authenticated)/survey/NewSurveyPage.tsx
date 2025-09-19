@@ -13,8 +13,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import { useCreateSurvey } from "@/hooks/domain/(authenticated)/useCreateSurvey";
 import { createSurveyRequestSchema } from "@/schemas/api/create";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -55,7 +56,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 const NewSurveyPage: React.FC = () => {
   const router = useRouter();
-  const [submitting, setSubmitting] = useState(false);
+  const { create, isCreating, error, created, reset } = useCreateSurvey();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
@@ -75,44 +76,32 @@ const NewSurveyPage: React.FC = () => {
 
   const onSubmit = useCallback(
     async (values: FormValues) => {
-      try {
-        setSubmitting(true);
-        setSubmitError(null);
-        const payload: FormValues = {
-          ...values,
-          // datetime-localをISO に変換
-          deadline: values.deadline ?? undefined,
-        };
-        const res = await fetch("/api/survey", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`Failed: ${res.status} ${text}`);
-        }
-        const json = (await res.json()) as { data?: { id: string } };
-        const id = json?.data?.id;
-        if (id) {
-          router.push(`/survey/${id}?created=1`);
-        } else {
-          router.push("/dashboard");
-        }
-      } catch (e) {
-        console.error(e);
-        setSubmitError(
-          e instanceof Error
-            ? e.message
-            : "送信中にエラーが発生しました。時間をおいて再度お試しください。",
-        );
-      } finally {
-        setSubmitting(false);
-      }
+      setSubmitError(null);
+      await create({
+        ...values,
+        deadline: values.deadline ?? undefined,
+      });
     },
-    [router],
+    [create],
   );
+
+  // 作成成功時に遷移
+  useEffect(() => {
+    if (!created) return;
+    const id = created.id;
+    if (id) {
+      router.push(`/survey/${id}?created=1`);
+    } else {
+      router.push("/dashboard");
+    }
+    // 次回に備えて状態リセット
+    reset();
+  }, [created, reset, router]);
+
+  // エラーの同期
+  useEffect(() => {
+    if (error) setSubmitError(error.message);
+  }, [error]);
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -246,8 +235,8 @@ const NewSurveyPage: React.FC = () => {
               >
                 キャンセル
               </Button>
-              <Button type="submit" disabled={submitting}>
-                {submitting ? "送信中..." : "投稿する"}
+              <Button type="submit" disabled={isCreating}>
+                {isCreating ? "送信中..." : "投稿する"}
               </Button>
             </div>
           </form>

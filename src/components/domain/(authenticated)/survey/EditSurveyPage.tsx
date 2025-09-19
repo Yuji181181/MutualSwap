@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { HttpError } from "@/hooks/common/useCustomizedSWR";
 import { useSurveyDetailPage } from "@/hooks/domain/(authenticated)/useSurveyDetailPage";
+import { useUpdateSurvey } from "@/hooks/domain/(authenticated)/useUpdateSurvey";
 import { updateSurveyRequestSchema } from "@/schemas/api/update";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -68,7 +69,13 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
   const { survey, isLoading, isError, error } = useSurveyDetailPage({
     id: props.id,
   });
-  const [submitting, setSubmitting] = useState(false);
+  const {
+    update,
+    isUpdating,
+    error: updateError,
+    updated,
+    reset: resetMutation,
+  } = useUpdateSurvey(props.id);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
@@ -98,40 +105,28 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
 
   const onSubmit = useCallback(
     async (values: FormValues) => {
-      try {
-        setSubmitting(true);
-        setSubmitError(null);
-
-        const payload: FormValues = {
-          ...values,
-          deadline:
-            typeof values.deadline === "string" && values.deadline.trim() === ""
-              ? undefined
-              : values.deadline,
-        };
-
-        const res = await fetch(`/api/survey/${props.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`Failed: ${res.status} ${text}`);
-        }
-        router.push(`/survey/${props.id}?updated=1`);
-      } catch (e) {
-        console.error(e);
-        setSubmitError(
-          e instanceof Error ? e.message : "更新中にエラーが発生しました。",
-        );
-      } finally {
-        setSubmitting(false);
-      }
+      setSubmitError(null);
+      await update({
+        ...values,
+        deadline:
+          typeof values.deadline === "string" && values.deadline.trim() === ""
+            ? undefined
+            : values.deadline,
+      });
     },
-    [props.id, router],
+    [update],
   );
+
+  useEffect(() => {
+    if (updated) {
+      router.push(`/survey/${props.id}?updated=1`);
+      resetMutation();
+    }
+  }, [updated, resetMutation, router, props.id]);
+
+  useEffect(() => {
+    if (updateError) setSubmitError(updateError.message);
+  }, [updateError]);
 
   if (isError) {
     return (
@@ -279,8 +274,8 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
               >
                 キャンセル
               </Button>
-              <Button type="submit" disabled={submitting}>
-                {submitting ? "保存中..." : "保存する"}
+              <Button type="submit" disabled={isUpdating}>
+                {isUpdating ? "保存中..." : "保存する"}
               </Button>
             </div>
           </form>
