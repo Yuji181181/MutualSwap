@@ -1,3 +1,4 @@
+import FabCreateButton from "@/components/common/FabCreateButton";
 import Header from "@/components/common/Header";
 import type React from "react";
 
@@ -10,6 +11,7 @@ export default function AuthenticatedLayout({
     <div>
       <Header />
       {children}
+      <FabCreateButton />
     </div>
   );
 }
