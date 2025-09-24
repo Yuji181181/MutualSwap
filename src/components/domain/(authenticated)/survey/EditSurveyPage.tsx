@@ -29,7 +29,7 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
   const {
     form,
     handleSubmit: onSubmit,
-    submitError,
+    error: submitError,
     survey,
     isLoading,
     isError,
@@ -87,7 +87,7 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
             <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
               {submitError && (
                 <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive text-sm">
-                  {submitError}
+                  {submitError.message}
                 </div>
               )}
 

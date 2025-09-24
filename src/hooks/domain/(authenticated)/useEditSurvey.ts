@@ -12,7 +12,7 @@ import type { ResBody } from "@/types/api";
 import type { Survey } from "@/types/api/survey";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 import { z } from "zod";
@@ -70,14 +70,11 @@ export const useEditSurvey = (id: string) => {
     trigger: update,
     isMutating: isUpdating,
     error: updateError,
-    data: updated,
     reset: resetMutation,
   } = useSWRMutation<Survey, Error, string, unknown>(
     `/api/survey/${id}`,
     putUpdater,
   );
-
-  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // フォーム設定
   const form = useForm<FormValues>({
@@ -105,36 +102,30 @@ export const useEditSurvey = (id: string) => {
   // 送信処理
   const handleSubmit = useCallback(
     async (values: FormValues) => {
-      setSubmitError(null);
-      await update({
-        ...values,
-        deadline:
-          typeof values.deadline === "string" && values.deadline.trim() === ""
-            ? undefined
-            : values.deadline,
-      });
+      try {
+        await update({
+          ...values,
+          deadline:
+            typeof values.deadline === "string" && values.deadline.trim() === ""
+              ? undefined
+              : values.deadline,
+        });
+
+        // 更新成功時の処理
+        router.push(`/survey/${id}?updated=1`);
+        resetMutation();
+      } catch (error) {
+        // エラー処理は自動的にSWRのerror状態に反映される
+        console.error("Survey update failed:", error);
+      }
     },
-    [update],
+    [update, router, id, resetMutation],
   );
-
-  // 更新成功時の処理
-  useEffect(() => {
-    if (updated) {
-      router.push(`/survey/${id}?updated=1`);
-      resetMutation();
-    }
-  }, [updated, resetMutation, router, id]);
-
-  // エラー処理
-  useEffect(() => {
-    if (updateError) setSubmitError(updateError.message);
-  }, [updateError]);
 
   return {
     // フォーム関連
     form,
     handleSubmit,
-    submitError,
 
     // データ取得関連
     survey,
@@ -144,5 +135,6 @@ export const useEditSurvey = (id: string) => {
 
     // 更新関連
     isUpdating,
+    updateError,
   } as const;
 };

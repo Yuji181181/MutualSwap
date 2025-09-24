@@ -8,7 +8,7 @@ import type { ResBody } from "@/types/api";
 import type { Survey } from "@/types/api/survey";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 import { z } from "zod";
@@ -58,14 +58,11 @@ export const useNewSurvey = () => {
     trigger: create,
     isMutating: isCreating,
     error,
-    data: created,
     reset,
   } = useSWRMutation<Survey, Error, string, unknown>(
     "/api/survey",
     postCreator,
   );
-
-  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // フォーム設定
   const form = useForm<FormValues>({
@@ -82,36 +79,32 @@ export const useNewSurvey = () => {
   // 送信処理
   const handleSubmit = useCallback(
     async (values: FormValues) => {
-      setSubmitError(null);
-      await create({
-        ...values,
-        deadline: values.deadline ?? undefined,
-      });
+      try {
+        const created = await create({
+          ...values,
+          deadline: values.deadline ?? undefined,
+        });
+
+        // 作成成功時の処理
+        const id = created.id;
+        if (id) {
+          router.push(`/survey/${id}?created=1`);
+        } else {
+          router.push("/dashboard");
+        }
+        reset();
+      } catch (error) {
+        // エラー処理は自動的にSWRのerror状態に反映される
+        console.error("Survey creation failed:", error);
+      }
     },
-    [create],
+    [create, router, reset],
   );
-
-  // 作成成功時の処理
-  useEffect(() => {
-    if (!created) return;
-    const id = created.id;
-    if (id) {
-      router.push(`/survey/${id}?created=1`);
-    } else {
-      router.push("/dashboard");
-    }
-    reset();
-  }, [created, reset, router]);
-
-  // エラー処理
-  useEffect(() => {
-    if (error) setSubmitError(error.message);
-  }, [error]);
 
   return {
     form,
     handleSubmit,
-    submitError,
+    error,
     isCreating,
   } as const;
 };
