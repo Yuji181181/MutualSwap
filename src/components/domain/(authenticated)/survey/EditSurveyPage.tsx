@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { HttpError } from "@/hooks/common/useCustomizedSWR";
 import { useSurveyDetailPage } from "@/hooks/domain/(authenticated)/useSurveyDetailPage";
 import { useUpdateSurvey } from "@/hooks/domain/(authenticated)/useUpdateSurvey";
+import { normalizeDeadlineToISO } from "@/lib/formatter";
 import { updateSurveyRequestSchema } from "@/schemas/api/update";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -25,22 +26,6 @@ import { z } from "zod";
 interface EditSurveyPageProps {
   id: string;
 }
-
-const normalizeDeadlineToISO = (value: unknown): string | undefined => {
-  if (typeof value !== "string") return undefined;
-  const raw = value.trim();
-  if (!raw) return undefined;
-  let candidate = raw.replaceAll("/", "-");
-  if (candidate.includes(" ") && !candidate.includes("T")) {
-    candidate = candidate.replace(" ", "T");
-  }
-  const d = new Date(candidate);
-  if (!Number.isNaN(d.getTime())) return d.toISOString();
-  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?Z$/.test(raw)) {
-    return raw;
-  }
-  return undefined;
-};
 
 const formSchema = updateSurveyRequestSchema.extend({
   deadline: z
