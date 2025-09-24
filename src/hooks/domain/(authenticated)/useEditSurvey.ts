@@ -1,7 +1,11 @@
 "use client";
 
 import { HttpError, useCustomizedSWR } from "@/hooks/common/useCustomizedSWR";
-import { normalizeDeadlineToISO, toLocalInputValue } from "@/lib/formatter";
+import {
+  normalizeDeadlineToISO,
+  reviveDates,
+  toLocalInputValue,
+} from "@/lib/formatter";
 import { surveySchema } from "@/schemas/api/read";
 import { updateSurveyRequestSchema } from "@/schemas/api/update";
 import type { ResBody } from "@/types/api";
@@ -20,27 +24,6 @@ const formSchema = updateSurveyRequestSchema.extend({
 });
 
 type FormValues = z.infer<typeof formSchema>;
-
-// Date復元ロジック
-const isIsoDateString = (value: string): boolean => {
-  return /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value);
-};
-
-const reviveDates = (input: unknown): unknown => {
-  if (Array.isArray(input)) return input.map((i) => reviveDates(i));
-  if (input && typeof input === "object") {
-    const result: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(input as Record<string, unknown>)) {
-      result[k] = reviveDates(v);
-    }
-    return result;
-  }
-  if (typeof input === "string" && isIsoDateString(input)) {
-    const time = Date.parse(input);
-    if (!Number.isNaN(time)) return new Date(time);
-  }
-  return input;
-};
 
 // API更新関数
 const putUpdater = async (

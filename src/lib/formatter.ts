@@ -42,3 +42,25 @@ export const normalizeDeadlineToISO = (value: unknown): string | undefined => {
   }
   return undefined;
 };
+
+// ISO形式の日付文字列かどうかを判定
+export const isIsoDateString = (value: string): boolean => {
+  return /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value);
+};
+
+// サーバーレスポンスの日付文字列をDateオブジェクトに復元
+export const reviveDates = (input: unknown): unknown => {
+  if (Array.isArray(input)) return input.map((i) => reviveDates(i));
+  if (input && typeof input === "object") {
+    const result: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(input as Record<string, unknown>)) {
+      result[k] = reviveDates(v);
+    }
+    return result;
+  }
+  if (typeof input === "string" && isIsoDateString(input)) {
+    const time = Date.parse(input);
+    if (!Number.isNaN(time)) return new Date(time);
+  }
+  return input;
+};
