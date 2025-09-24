@@ -1,58 +1,19 @@
 "use client";
 
-import { HttpError, useCustomizedSWR } from "@/hooks/common/useCustomizedSWR";
-import {
-  normalizeDeadlineToISO,
-  reviveDates,
-  toLocalInputValue,
-} from "@/lib/formatter";
+import { useCustomizedSWR } from "@/hooks/common/useCustomizedSWR";
+import { updateSurvey } from "@/lib/api/survey";
+import { toLocalInputValue } from "@/lib/formatter";
 import { surveySchema } from "@/schemas/api/read";
-import { updateSurveyRequestSchema } from "@/schemas/api/update";
-import type { ResBody } from "@/types/api";
+import {
+  type UpdateSurveyFormValues,
+  updateSurveyFormSchema,
+} from "@/schemas/form/survey";
 import type { Survey } from "@/types/api/survey";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
-import { z } from "zod";
-
-const formSchema = updateSurveyRequestSchema.extend({
-  deadline: z
-    .preprocess((v) => normalizeDeadlineToISO(v), z.string().datetime())
-    .optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-// API更新関数
-const putUpdater = async (
-  url: string,
-  { arg }: { arg: unknown },
-): Promise<Survey> => {
-  const parsed = updateSurveyRequestSchema.safeParse(arg);
-  if (!parsed.success) {
-    throw new Error("入力値が不正です。フォームを確認してください。");
-  }
-
-  const res = await fetch(url, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify(parsed.data),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new HttpError(res.status, res.statusText, url, text);
-  }
-  const json = (await res.json()) as ResBody<unknown>;
-  const revived = reviveDates(json.data);
-  const verified = surveySchema.safeParse(revived);
-  if (!verified.success) {
-    throw new Error("サーバーレスポンスの形式が不正です。");
-  }
-  return verified.data;
-};
 
 export const useEditSurvey = (id: string) => {
   const router = useRouter();
@@ -73,12 +34,12 @@ export const useEditSurvey = (id: string) => {
     reset: resetMutation,
   } = useSWRMutation<Survey, Error, string, unknown>(
     `/api/survey/${id}`,
-    putUpdater,
+    updateSurvey,
   );
 
   // フォーム設定
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<UpdateSurveyFormValues>({
+    resolver: zodResolver(updateSurveyFormSchema),
   });
 
   // フォーム初期値の生成
@@ -91,7 +52,7 @@ export const useEditSurvey = (id: string) => {
       questionCount: survey.questionCount,
       deadline: toLocalInputValue(survey.deadline ?? undefined),
       isActive: survey.isActive,
-    } satisfies Partial<FormValues> as FormValues;
+    } satisfies Partial<UpdateSurveyFormValues> as UpdateSurveyFormValues;
   }, [survey]);
 
   // フォーム初期値の設定
@@ -101,7 +62,7 @@ export const useEditSurvey = (id: string) => {
 
   // 送信処理
   const handleSubmit = useCallback(
-    async (values: FormValues) => {
+    async (values: UpdateSurveyFormValues) => {
       try {
         await update({
           ...values,
