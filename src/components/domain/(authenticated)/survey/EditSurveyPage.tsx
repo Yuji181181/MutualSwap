@@ -12,106 +12,27 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { HttpError } from "@/hooks/common/useCustomizedSWR";
-import { useSurveyDetailPage } from "@/hooks/domain/(authenticated)/useSurveyDetailPage";
-import { useUpdateSurvey } from "@/hooks/domain/(authenticated)/useUpdateSurvey";
-import { normalizeDeadlineToISO } from "@/lib/formatter";
-import { updateSurveyRequestSchema } from "@/schemas/api/update";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEditSurvey } from "@/hooks/domain/(authenticated)/useEditSurvey";
+import type { EditSurveyPageProps } from "@/types/components";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-interface EditSurveyPageProps {
-  id: string;
-}
-
-const formSchema = updateSurveyRequestSchema.extend({
-  deadline: z
-    .preprocess((v) => normalizeDeadlineToISO(v), z.string().datetime())
-    .optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-const toLocalInputValue = (
-  date: Date | null | undefined,
-): string | undefined => {
-  if (!date) return undefined;
-  const d = new Date(date);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  const mm = pad(d.getMonth() + 1);
-  const dd = pad(d.getDate());
-  const hh = pad(d.getHours());
-  const mi = pad(d.getMinutes());
-  return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
-};
 
 export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
   const router = useRouter();
-  const { survey, isLoading, isError, error } = useSurveyDetailPage({
-    id: props.id,
-  });
   const {
-    update,
-    isUpdating,
-    error: updateError,
-    updated,
-    reset: resetMutation,
-  } = useUpdateSurvey(props.id);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-  });
-
-  const defaults = useMemo(() => {
-    if (!survey) return undefined;
-    return {
-      title: survey.title,
-      description: survey.description ?? "",
-      googleFormUrl: survey.googleFormUrl,
-      questionCount: survey.questionCount,
-      deadline: toLocalInputValue(survey.deadline ?? undefined),
-      isActive: survey.isActive,
-    } satisfies Partial<FormValues> as FormValues;
-  }, [survey]);
-
-  useEffect(() => {
-    if (defaults) reset(defaults);
-  }, [defaults, reset]);
-
-  const onSubmit = useCallback(
-    async (values: FormValues) => {
-      setSubmitError(null);
-      await update({
-        ...values,
-        deadline:
-          typeof values.deadline === "string" && values.deadline.trim() === ""
-            ? undefined
-            : values.deadline,
-      });
+    form: {
+      register,
+      handleSubmit,
+      formState: { errors },
     },
-    [update],
-  );
-
-  useEffect(() => {
-    if (updated) {
-      router.push(`/survey/${props.id}?updated=1`);
-      resetMutation();
-    }
-  }, [updated, resetMutation, router, props.id]);
-
-  useEffect(() => {
-    if (updateError) setSubmitError(updateError.message);
-  }, [updateError]);
+    handleSubmit: onSubmit,
+    submitError,
+    survey,
+    isLoading,
+    isError,
+    error,
+    isUpdating,
+  } = useEditSurvey(props.id);
 
   if (isError) {
     return (
@@ -240,7 +161,7 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
                 type="datetime-local"
                 aria-invalid={!!errors.deadline}
                 {...register("deadline", {
-                  setValueAs: (v) =>
+                  setValueAs: (v: string) =>
                     typeof v === "string" && v.trim() === "" ? undefined : v,
                 })}
               />

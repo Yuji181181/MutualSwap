@@ -11,97 +11,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useNewSurvey } from "@/hooks/domain/(authenticated)/useNewSurvey";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
-
-import { useCreateSurvey } from "@/hooks/domain/(authenticated)/useCreateSurvey";
-import { createSurveyRequestSchema } from "@/schemas/api/create";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-// ISO文字列に正規化
-const normalizeDeadlineToISO = (value: unknown): string | undefined => {
-  if (typeof value !== "string") return undefined;
-  const raw = value.trim();
-  if (!raw) return undefined;
-  let candidate = raw;
-  // 例: 2025/10/31 06:00 -> 2025-10-31T06:00
-  if (candidate.includes("/")) {
-    candidate = candidate.replaceAll("/", "-");
-  }
-  if (candidate.includes(" ") && !candidate.includes("T")) {
-    candidate = candidate.replace(" ", "T");
-  }
-  // DateにパースしてISOへ
-  const d = new Date(candidate);
-  if (!Number.isNaN(d.getTime())) {
-    return d.toISOString();
-  }
-  // 既にISOならそのまま
-  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?Z$/.test(raw)) {
-    return raw;
-  }
-  return undefined;
-};
-
-const formSchema = createSurveyRequestSchema.extend({
-  deadline: z
-    .preprocess((v) => normalizeDeadlineToISO(v), z.string().datetime())
-    .optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
 
 const NewSurveyPage: React.FC = () => {
   const router = useRouter();
-  const { create, isCreating, error, created, reset } = useCreateSurvey();
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      googleFormUrl: "",
-      questionCount: 1,
-      deadline: undefined,
+    form: {
+      register,
+      handleSubmit,
+      formState: { errors },
     },
-  });
-
-  const onSubmit = useCallback(
-    async (values: FormValues) => {
-      setSubmitError(null);
-      await create({
-        ...values,
-        deadline: values.deadline ?? undefined,
-      });
-    },
-    [create],
-  );
-
-  // 作成成功時に遷移
-  useEffect(() => {
-    if (!created) return;
-    const id = created.id;
-    if (id) {
-      router.push(`/survey/${id}?created=1`);
-    } else {
-      router.push("/dashboard");
-    }
-    // 次回に備えて状態リセット
-    reset();
-  }, [created, reset, router]);
-
-  // エラーの同期
-  useEffect(() => {
-    if (error) setSubmitError(error.message);
-  }, [error]);
+    handleSubmit: onSubmit,
+    submitError,
+    isCreating,
+  } = useNewSurvey();
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -216,7 +141,7 @@ const NewSurveyPage: React.FC = () => {
                 type="datetime-local"
                 aria-invalid={!!errors.deadline}
                 {...register("deadline", {
-                  setValueAs: (v) =>
+                  setValueAs: (v: string) =>
                     typeof v === "string" && v.trim() === "" ? undefined : v,
                 })}
               />
