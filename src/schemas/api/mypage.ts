@@ -11,12 +11,20 @@ export const mypageSurveySchema = z.object({
   isActive: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  user: z.object({
-    id: z.string(),
-    name: z.string(),
-    grade: z.number().nullable(),
-    image: z.string().nullable(),
-  }),
 });
 
 export const mypageSurveyListSchema = z.array(mypageSurveySchema);
+
+export const mypageUserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  grade: z.number().nullable(),
+  image: z.string().nullable(),
+  totalEarnedPoints: z.number(),
+  currentPoints: z.number(),
+});
+
+export const mypageResponseSchema = z.object({
+  user: mypageUserSchema.nullable(),
+  surveys: mypageSurveyListSchema,
+});
