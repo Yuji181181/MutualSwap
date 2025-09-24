@@ -10,10 +10,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useDashboardPage } from "@/hooks/domain/(authenticated)/useDashboardPage";
+import { authClient } from "@/lib/auth-client";
 import type React from "react";
 
 const DashboardPage: React.FC = () => {
   const { surveys, isLoading, isError } = useDashboardPage();
+  const { data: session } = authClient.useSession();
+  const currentUserId = session?.user?.id;
 
   if (isError) {
     return (
@@ -47,7 +50,11 @@ const DashboardPage: React.FC = () => {
                   <SurveyCardSkeleton key={index} />
                 ))
               : surveys.map((survey) => (
-                  <SurveyCard key={survey.id} survey={survey} />
+                  <SurveyCard
+                    key={survey.id}
+                    survey={survey}
+                    currentUserId={currentUserId}
+                  />
                 ))}
           </div>
         </div>

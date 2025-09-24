@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { authClient } from "@/lib/auth-client";
 import { formatDate } from "@/lib/formatter";
 import type { surveyListSchema } from "@/schemas/api/survey";
 import { ExternalLink, Pencil } from "lucide-react";
@@ -19,12 +18,12 @@ import type { z } from "zod";
 
 interface SurveyCardProps {
   survey: z.infer<typeof surveyListSchema>[0];
+  currentUserId?: string;
 }
 
 export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
   const router = useRouter();
-  const { data: session } = authClient.useSession();
-  const canEdit = session?.user?.id === props.survey.user.id;
+  const canEdit = props.currentUserId === props.survey.user.id;
   return (
     <Card
       key={props.survey.id}
