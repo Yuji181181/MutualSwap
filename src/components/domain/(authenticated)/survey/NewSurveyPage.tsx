@@ -8,8 +8,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useNewSurvey } from "@/hooks/domain/(authenticated)/useNewSurvey";
 import { useRouter } from "next/navigation";
@@ -18,11 +25,7 @@ import type React from "react";
 const NewSurveyPage: React.FC = () => {
   const router = useRouter();
   const {
-    form: {
-      register,
-      handleSubmit,
-      formState: { errors },
-    },
+    form,
     handleSubmit: onSubmit,
     submitError,
     isCreating,
@@ -42,129 +45,142 @@ const NewSurveyPage: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            {submitError && (
-              <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive text-sm">
-                {submitError}
+          <Form {...form}>
+            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+              {submitError && (
+                <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive text-sm">
+                  {submitError}
+                </div>
+              )}
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      タイトル <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="border-black/30"
+                        placeholder="アンケートのタイトル"
+                        {...field}
+                      />
+                    </FormControl>
+                    <p className="text-muted-foreground text-xs">
+                      わかりやすいタイトルを入力してください（200文字以内）。
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>説明（任意）</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={6}
+                        className="min-h-32 border border-black/30 text-base leading-relaxed focus:border-black/50 focus-visible:ring-black/30"
+                        placeholder="アンケートの目的や内容、回答者への補足などを記載（任意）"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="googleFormUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      GoogleフォームURL{" "}
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="border-black/30"
+                        type="url"
+                        placeholder="https://docs.google.com/forms/..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <p className="text-muted-foreground text-xs">
+                      フォームの公開リンクを貼り付けてください。
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="questionCount"
+                render={({ field: { value, onChange, ...field } }) => (
+                  <FormItem>
+                    <FormLabel>
+                      設問数 <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="border-black/30"
+                        type="number"
+                        inputMode="numeric"
+                        min={1}
+                        step={1}
+                        placeholder="例: 10"
+                        value={value || ""}
+                        onChange={(e) => onChange(Number(e.target.value) || 0)}
+                        {...field}
+                      />
+                    </FormControl>
+                    <p className="text-muted-foreground text-xs">
+                      Googleフォームのアンケートの設問数を入力してください。
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="deadline"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>締切（任意）</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="border-black/30"
+                        type="datetime-local"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.back()}
+                >
+                  キャンセル
+                </Button>
+                <Button type="submit" disabled={isCreating}>
+                  {isCreating ? "送信中..." : "投稿する"}
+                </Button>
               </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="title">
-                タイトル <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                className="border-black/30"
-                id="title"
-                placeholder="アンケートのタイトル"
-                aria-invalid={!!errors.title}
-                {...register("title")}
-              />
-              <p className="text-muted-foreground text-xs">
-                わかりやすいタイトルを入力してください（200文字以内）。
-              </p>
-              {errors.title && (
-                <p className="text-destructive text-sm">
-                  {errors.title.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">説明（任意）</Label>
-              <Textarea
-                id="description"
-                rows={6}
-                className="min-h-32 border border-black/30 text-base leading-relaxed focus:border-black/50 focus-visible:ring-black/30"
-                placeholder="アンケートの目的や内容、回答者への補足などを記載（任意）"
-                aria-invalid={!!errors.description}
-                {...register("description")}
-              />
-              {errors.description && (
-                <p className="text-destructive text-sm">
-                  {errors.description.message as string}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="googleFormUrl">
-                GoogleフォームURL <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                className="border-black/30"
-                id="googleFormUrl"
-                type="url"
-                placeholder="https://docs.google.com/forms/..."
-                aria-invalid={!!errors.googleFormUrl}
-                {...register("googleFormUrl")}
-              />
-              <p className="text-muted-foreground text-xs">
-                フォームの公開リンクを貼り付けてください。
-              </p>
-              {errors.googleFormUrl && (
-                <p className="text-destructive text-sm">
-                  {errors.googleFormUrl.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="questionCount">
-                設問数 <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                className="border-black/30"
-                id="questionCount"
-                type="number"
-                inputMode="numeric"
-                min={1}
-                step={1}
-                placeholder="例: 10"
-                aria-invalid={!!errors.questionCount}
-                {...register("questionCount", { valueAsNumber: true })}
-              />
-              <p className="text-muted-foreground text-xs">
-                Googleフォームのアンケートの設問数を入力してください。
-              </p>
-              {errors.questionCount && (
-                <p className="text-destructive text-sm">
-                  {errors.questionCount.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="deadline">締切（任意）</Label>
-              <Input
-                className="border-black/30"
-                id="deadline"
-                type="datetime-local"
-                aria-invalid={!!errors.deadline}
-                {...register("deadline", {
-                  setValueAs: (v: string) =>
-                    typeof v === "string" && v.trim() === "" ? undefined : v,
-                })}
-              />
-              {errors.deadline && (
-                <p className="text-destructive text-sm">
-                  {errors.deadline.message as string}
-                </p>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-              >
-                キャンセル
-              </Button>
-              <Button type="submit" disabled={isCreating}>
-                {isCreating ? "送信中..." : "投稿する"}
-              </Button>
-            </div>
-          </form>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </main>

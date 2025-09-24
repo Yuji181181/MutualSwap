@@ -8,8 +8,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { HttpError } from "@/hooks/common/useCustomizedSWR";
 import { useEditSurvey } from "@/hooks/domain/(authenticated)/useEditSurvey";
@@ -20,11 +27,7 @@ import type React from "react";
 export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
   const router = useRouter();
   const {
-    form: {
-      register,
-      handleSubmit,
-      formState: { errors },
-    },
+    form,
     handleSubmit: onSubmit,
     submitError,
     survey,
@@ -80,111 +83,120 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
           <CardDescription>内容を更新して保存してください。</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            {submitError && (
-              <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive text-sm">
-                {submitError}
+          <Form {...form}>
+            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+              {submitError && (
+                <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive text-sm">
+                  {submitError}
+                </div>
+              )}
+
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>タイトル</FormLabel>
+                    <FormControl>
+                      <Input className="border-black/30" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>説明（任意）</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={6}
+                        className="min-h-32 border border-black/30 text-base leading-relaxed focus:border-black/50 focus-visible:ring-black/30"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="googleFormUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>GoogleフォームURL</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="border-black/30"
+                        type="url"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="questionCount"
+                render={({ field: { value, onChange, ...field } }) => (
+                  <FormItem>
+                    <FormLabel>設問数</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="border-black/30"
+                        type="number"
+                        inputMode="numeric"
+                        min={1}
+                        step={1}
+                        value={value || ""}
+                        onChange={(e) => onChange(Number(e.target.value) || 0)}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="deadline"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>締切（任意）</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="border-black/30"
+                        type="datetime-local"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.back()}
+                >
+                  キャンセル
+                </Button>
+                <Button type="submit" disabled={isUpdating}>
+                  {isUpdating ? "保存中..." : "保存する"}
+                </Button>
               </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="title">タイトル</Label>
-              <Input
-                id="title"
-                className="border-black/30"
-                aria-invalid={!!errors.title}
-                {...register("title")}
-              />
-              {errors.title && (
-                <p className="text-destructive text-sm">
-                  {errors.title.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">説明（任意）</Label>
-              <Textarea
-                id="description"
-                rows={6}
-                className="min-h-32 border border-black/30 text-base leading-relaxed focus:border-black/50 focus-visible:ring-black/30"
-                aria-invalid={!!errors.description}
-                {...register("description")}
-              />
-              {errors.description && (
-                <p className="text-destructive text-sm">
-                  {errors.description.message as string}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="googleFormUrl">GoogleフォームURL</Label>
-              <Input
-                id="googleFormUrl"
-                className="border-black/30"
-                type="url"
-                aria-invalid={!!errors.googleFormUrl}
-                {...register("googleFormUrl")}
-              />
-              {errors.googleFormUrl && (
-                <p className="text-destructive text-sm">
-                  {errors.googleFormUrl.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="questionCount">設問数</Label>
-              <Input
-                id="questionCount"
-                className="border-black/30"
-                type="number"
-                inputMode="numeric"
-                min={1}
-                step={1}
-                aria-invalid={!!errors.questionCount}
-                {...register("questionCount", { valueAsNumber: true })}
-              />
-              {errors.questionCount && (
-                <p className="text-destructive text-sm">
-                  {errors.questionCount.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="deadline">締切（任意）</Label>
-              <Input
-                id="deadline"
-                className="border-black/30"
-                type="datetime-local"
-                aria-invalid={!!errors.deadline}
-                {...register("deadline", {
-                  setValueAs: (v: string) =>
-                    typeof v === "string" && v.trim() === "" ? undefined : v,
-                })}
-              />
-              {errors.deadline && (
-                <p className="text-destructive text-sm">
-                  {errors.deadline.message as string}
-                </p>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-              >
-                キャンセル
-              </Button>
-              <Button type="submit" disabled={isUpdating}>
-                {isUpdating ? "保存中..." : "保存する"}
-              </Button>
-            </div>
-          </form>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </main>
