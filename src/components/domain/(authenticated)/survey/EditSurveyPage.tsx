@@ -1,6 +1,5 @@
 "use client";
 
-import { EditSurveySkeleton } from "@/components/domain/(authenticated)/survey/EditSurveySkeleton";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -66,7 +65,12 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
   if (isLoading || !survey) {
     return (
       <main className="container mx-auto px-4 py-8">
-        <EditSurveySkeleton />
+        <Card className="mx-auto w-full max-w-2xl">
+          <CardHeader>
+            <CardTitle>読み込み中...</CardTitle>
+            <CardDescription>編集フォームを準備しています。</CardDescription>
+          </CardHeader>
+        </Card>
       </main>
     );
   }
