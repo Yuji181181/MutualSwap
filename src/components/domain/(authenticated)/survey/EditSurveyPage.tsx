@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -23,6 +24,7 @@ import { useEditSurvey } from "@/hooks/domain/(authenticated)/useEditSurvey";
 import type { EditSurveyPageProps } from "@/types/components";
 import { useRouter } from "next/navigation";
 import type React from "react";
+import { useState } from "react";
 
 export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
   const router = useRouter();
@@ -35,7 +37,11 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
     isError,
     error,
     isUpdating,
+    handleDelete,
+    isDeleting,
+    deleteError,
   } = useEditSurvey(props.id);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   if (isError) {
     return (
@@ -81,6 +87,16 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
         <CardHeader>
           <CardTitle>投稿を編集</CardTitle>
           <CardDescription>内容を更新して保存してください。</CardDescription>
+          <CardAction>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={isDeleting || isUpdating}
+              onClick={() => setConfirmingDelete(true)}
+            >
+              削除する
+            </Button>
+          </CardAction>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -88,6 +104,11 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
               {submitError && (
                 <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive text-sm">
                   {submitError.message}
+                </div>
+              )}
+              {deleteError && (
+                <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive text-sm">
+                  {deleteError.message}
                 </div>
               )}
 
@@ -199,6 +220,42 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
           </Form>
         </CardContent>
       </Card>
+      {confirmingDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle id="delete-confirm-title">削除の確認</CardTitle>
+              <CardDescription>
+                本当にこの投稿を削除しますか？
+                <br />
+                この操作は取り消せません。
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-end gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setConfirmingDelete(false)}
+                  disabled={isDeleting}
+                >
+                  キャンセル
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  disabled={isDeleting}
+                  onClick={() => {
+                    void handleDelete();
+                  }}
+                >
+                  {isDeleting ? "削除中..." : "完全に削除する"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </main>
   );
 };

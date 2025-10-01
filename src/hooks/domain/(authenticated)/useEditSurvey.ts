@@ -1,7 +1,7 @@
 "use client";
 
 import { useCustomizedSWR } from "@/hooks/common/useCustomizedSWR";
-import { updateSurvey } from "@/lib/api/survey";
+import { deleteSurvey, updateSurvey } from "@/lib/api/survey";
 import { toLocalInputValue } from "@/lib/formatter";
 import { surveySchema } from "@/schemas/api/read";
 import {
@@ -35,6 +35,15 @@ export const useEditSurvey = (id: string) => {
   } = useSWRMutation<Survey, Error, string, unknown>(
     `/api/survey/${id}`,
     updateSurvey,
+  );
+
+  // データ削除
+  const {
+    trigger: remove,
+    isMutating: isDeleting,
+    error: deleteError,
+  } = useSWRMutation(`/api/survey/${id}`, async (url: string) =>
+    deleteSurvey(url),
   );
 
   // フォーム設定
@@ -83,6 +92,15 @@ export const useEditSurvey = (id: string) => {
     [update, router, id, resetMutation],
   );
 
+  const handleDelete = useCallback(async () => {
+    try {
+      await remove();
+      router.push(`/dashboard?deleted=${id}`);
+    } catch (error) {
+      console.error("Survey delete failed:", error);
+    }
+  }, [remove, router, id]);
+
   return {
     // フォーム関連
     form,
@@ -97,5 +115,9 @@ export const useEditSurvey = (id: string) => {
     // 更新関連
     isUpdating,
     updateError,
+    // 削除関連
+    handleDelete,
+    isDeleting,
+    deleteError,
   } as const;
 };

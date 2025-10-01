@@ -1,10 +1,11 @@
 import { HttpError } from "@/hooks/common/useCustomizedSWR";
 import { reviveDates } from "@/lib/formatter";
 import { createSurveyRequestSchema } from "@/schemas/api/create";
+import { deleteSurveyResponseSchema } from "@/schemas/api/deleteSurvey";
 import { surveySchema } from "@/schemas/api/read";
 import { updateSurveyRequestSchema } from "@/schemas/api/update";
 import type { ResBody } from "@/types/api";
-import type { Survey } from "@/types/api/survey";
+import type { DeleteSurveyResponse, Survey } from "@/types/api/survey";
 
 // Survey作成用API関数
 export const createSurvey = async (
@@ -58,6 +59,27 @@ export const updateSurvey = async (
   const json = (await res.json()) as ResBody<unknown>;
   const revived = reviveDates(json.data);
   const verified = surveySchema.safeParse(revived);
+  if (!verified.success) {
+    throw new Error("サーバーレスポンスの形式が不正です。");
+  }
+  return verified.data;
+};
+
+// Survey 削除用API関数
+export const deleteSurvey = async (
+  url: string,
+): Promise<DeleteSurveyResponse> => {
+  const res = await fetch(url, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new HttpError(res.status, res.statusText, url, text);
+  }
+  const json = (await res.json()) as ResBody<unknown>;
+  const revived = reviveDates(json.data);
+  const verified = deleteSurveyResponseSchema.safeParse(revived);
   if (!verified.success) {
     throw new Error("サーバーレスポンスの形式が不正です。");
   }
