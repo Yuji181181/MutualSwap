@@ -3,11 +3,7 @@
 import { useCustomizedSWR } from "@/hooks/common/useCustomizedSWR";
 import { surveySchema } from "@/schemas/api/read";
 
-interface UseSurveyDetailPageArgs {
-  id: string;
-}
-
-export const useSurveyDetailPage = (props: UseSurveyDetailPageArgs) => {
+export const useSurveyDetailPage = (props: { id: string }) => {
   const { data, isLoading, isError, error, mutate } = useCustomizedSWR(
     `/api/survey/${props.id}`,
     surveySchema,

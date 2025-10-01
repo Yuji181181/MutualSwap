@@ -22,12 +22,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { HttpError } from "@/hooks/common/useCustomizedSWR";
 import { useEditSurvey } from "@/hooks/domain/(authenticated)/useEditSurvey";
-import type { EditSurveyPageProps } from "@/types/components";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 
-export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
+export const EditSurveyPage: React.FC<{ id: string }> = (props) => {
   const router = useRouter();
   const {
     form,
