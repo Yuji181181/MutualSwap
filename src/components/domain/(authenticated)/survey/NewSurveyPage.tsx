@@ -1,5 +1,6 @@
 "use client";
 
+import { SurveyFormSkeleton } from "@/components/domain/(authenticated)/survey/SurveyFormSkeleton";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,6 +31,14 @@ const NewSurveyPage: React.FC = () => {
     error: submitError,
     isCreating,
   } = useNewSurvey();
+
+  if (isCreating) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <SurveyFormSkeleton />
+      </main>
+    );
+  }
 
   return (
     <main className="container mx-auto px-4 py-8">
