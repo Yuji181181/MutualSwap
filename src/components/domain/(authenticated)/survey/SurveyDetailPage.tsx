@@ -17,11 +17,7 @@ import { ExternalLink, Pencil } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import type React from "react";
 
-interface SurveyDetailPageProps {
-  id: string;
-}
-
-export const SurveyDetailPage: React.FC<SurveyDetailPageProps> = (props) => {
+export const SurveyDetailPage: React.FC<{ id: string }> = (props) => {
   const { survey, isLoading, isError } = useSurveyDetailPage({ id: props.id });
   const { data: session } = authClient.useSession();
   const searchParams = useSearchParams();
