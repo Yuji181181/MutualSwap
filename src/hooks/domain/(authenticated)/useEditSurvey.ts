@@ -11,12 +11,15 @@ import {
 import type { Survey } from "@/types/api/survey";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
 export const useEditSurvey = (id: string) => {
   const router = useRouter();
+  // 削除実行後（リダイレクト待ち）であることを示すフラグ。
+  // これがtrueの間は404などのエラー表示を抑制してフラッシュを防ぐ。
+  const [hasDeleted, setHasDeleted] = useState(false);
 
   // データ取得
   const {
@@ -94,10 +97,14 @@ export const useEditSurvey = (id: string) => {
 
   const handleDelete = useCallback(async () => {
     try {
+      // 先にフラグを立てて以後の再検証による404エラー描画を抑制
+      setHasDeleted(true);
       await remove();
       router.push(`/dashboard?deleted=${id}`);
     } catch (error) {
       console.error("Survey delete failed:", error);
+      // 失敗したらフラグを戻す（再度操作できるように）
+      setHasDeleted(false);
     }
   }, [remove, router, id]);
 
@@ -119,5 +126,6 @@ export const useEditSurvey = (id: string) => {
     handleDelete,
     isDeleting,
     deleteError,
+    hasDeleted,
   } as const;
 };

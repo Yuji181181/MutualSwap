@@ -41,10 +41,13 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
     handleDelete,
     isDeleting,
     deleteError,
+    hasDeleted,
   } = useEditSurvey(props.id);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
-  if (isError) {
+  // 削除後の再検証で404が返り瞬間的にエラーカードが表示されるフラッシュを
+  // hasDeletedフラグで抑制する。
+  if (isError && !hasDeleted) {
     return (
       <main className="container mx-auto px-4 py-8">
         <Card>
@@ -69,7 +72,8 @@ export const EditSurveyPage: React.FC<EditSurveyPageProps> = (props) => {
     );
   }
 
-  if (isLoading || !survey) {
+  // hasDeleted時（削除成功後リダイレクト待ち）もスケルトンを出して静的に見せる
+  if (isLoading || !survey || hasDeleted) {
     return (
       <main className="container mx-auto px-4 py-8">
         <SurveyFormSkeleton />
