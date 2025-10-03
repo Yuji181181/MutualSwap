@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useSurveyDetailPage } from "@/hooks/domain/(authenticated)/useSurveyDetailPage";
+import { useDetailSurveyPage } from "@/hooks/domain/(authenticated)/useDetailSurveyPage";
 import { authClient } from "@/lib/auth-client";
 import { formatDate } from "@/lib/formatter";
 import { ExternalLink, Pencil } from "lucide-react";
@@ -18,7 +18,7 @@ import { useSearchParams } from "next/navigation";
 import type React from "react";
 
 export const SurveyDetailPage: React.FC<{ id: string }> = (props) => {
-  const { survey, isLoading, isError } = useSurveyDetailPage({ id: props.id });
+  const { survey, isLoading, isError } = useDetailSurveyPage({ id: props.id });
   const { data: session } = authClient.useSession();
   const searchParams = useSearchParams();
   const created = searchParams?.get("created") === "1";

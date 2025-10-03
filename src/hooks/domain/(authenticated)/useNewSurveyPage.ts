@@ -12,7 +12,7 @@ import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
-export const useNewSurvey = () => {
+export const useNewSurveyPage = () => {
   const router = useRouter();
 
   // データ作成

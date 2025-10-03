@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useNewSurvey } from "@/hooks/domain/(authenticated)/useNewSurvey";
+import { useNewSurveyPage } from "@/hooks/domain/(authenticated)/useNewSurveyPage";
 import { useRouter } from "next/navigation";
 import type React from "react";
 
@@ -30,7 +30,7 @@ const NewSurveyPage: React.FC = () => {
     handleSubmit: onSubmit,
     error: submitError,
     isCreating,
-  } = useNewSurvey();
+  } = useNewSurveyPage();
 
   if (isCreating) {
     return (

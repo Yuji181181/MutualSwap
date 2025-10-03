@@ -15,7 +15,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
-export const useEditSurvey = (id: string) => {
+export const useEditSurveyPage = (id: string) => {
   const router = useRouter();
   // 削除実行後（リダイレクト待ち）であることを示すフラグ。
   // これがtrueの間は404などのエラー表示を抑制してフラッシュを防ぐ。
