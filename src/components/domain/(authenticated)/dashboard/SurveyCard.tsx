@@ -10,10 +10,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { formatDate } from "@/lib/formatter";
-import type { SurveyCardProps } from "@/types/components";
+import type { surveyListSchema } from "@/schemas/api/survey";
 import { ExternalLink, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
+import type { z } from "zod";
+
+interface SurveyCardProps {
+  survey: z.infer<typeof surveyListSchema>[0];
+  currentUserId?: string;
+}
 
 export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
   const router = useRouter();

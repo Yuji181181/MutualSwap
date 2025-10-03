@@ -1,16 +1,49 @@
 "use client";
 
-import { createSurvey } from "@/lib/api/survey";
+import { HttpError } from "@/hooks/common/useCustomizedSWR";
+import { reviveDates } from "@/lib/formatter";
+import { createSurveyRequestSchema } from "@/schemas/api/create";
+import { surveySchema } from "@/schemas/api/read";
 import {
   type CreateSurveyFormValues,
   createSurveyFormSchema,
 } from "@/schemas/form/survey";
+import type { ResBody } from "@/types/api";
 import type { Survey } from "@/types/api/survey";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
+
+// Survey作成用API関数
+const createSurvey = async (
+  url: string,
+  { arg }: { arg: unknown },
+): Promise<Survey> => {
+  const parsed = createSurveyRequestSchema.safeParse(arg);
+  if (!parsed.success) {
+    throw new Error("入力値が不正です。フォームを確認してください。");
+  }
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(parsed.data),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new HttpError(res.status, res.statusText, url, text);
+  }
+  const json = (await res.json()) as ResBody<unknown>;
+  const revived = reviveDates(json.data);
+  const verified = surveySchema.safeParse(revived);
+  if (!verified.success) {
+    throw new Error("サーバーレスポンスの形式が不正です。");
+  }
+  return verified.data;
+};
 
 export const useNewSurveyPage = () => {
   const router = useRouter();
