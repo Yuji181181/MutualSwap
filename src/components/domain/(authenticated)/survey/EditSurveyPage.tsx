@@ -78,16 +78,7 @@ export const EditSurveyPage: React.FC<{ id: string }> = (props) => {
     );
   }
 
-  // 削除成功後もスケルトンを出して静的に見せる
-  if (isLoading || !survey || hasDeleted) {
-    return (
-      <main className="container mx-auto px-4 py-8">
-        <SurveyFormSkeleton />
-      </main>
-    );
-  }
-
-  if (isUpdating || isDeleting) {
+  if (isLoading || !survey || hasDeleted || isUpdating || isDeleting) {
     return (
       <main className="container mx-auto px-4 py-8">
         <SurveyFormSkeleton />
