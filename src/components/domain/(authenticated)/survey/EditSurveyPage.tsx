@@ -34,6 +34,16 @@ import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 
+const getErrorMessage = (error: unknown): string => {
+  const status = error instanceof HttpError ? error.status : undefined;
+
+  if (status === 404) return "対象の投稿が見つかりません。";
+  if (status === 403) return "この投稿を編集する権限がありません。";
+  if (status === 401) return "ログインが必要です。";
+
+  return "データの取得に失敗しました。時間をおいて再度お試しください。";
+};
+
 export const EditSurveyPage: React.FC<{ id: string }> = (props) => {
   const router = useRouter();
   const {
@@ -52,8 +62,7 @@ export const EditSurveyPage: React.FC<{ id: string }> = (props) => {
   } = useEditSurveyPage(props.id);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
-  // 削除後の再検証で404が返り瞬間的にエラーカードが表示されるフラッシュを
-  // hasDeletedフラグで抑制する。
+  // 削除後の再検証で404が返り瞬間的にエラーカードが表示されるフラッシュを防ぐ
   if (isError && !hasDeleted) {
     return (
       <main className="container mx-auto px-4 py-8">
@@ -62,24 +71,14 @@ export const EditSurveyPage: React.FC<{ id: string }> = (props) => {
             <CardTitle className="text-balance text-lg">エラー</CardTitle>
           </CardHeader>
           <CardContent>
-            <CardDescription>
-              {(() => {
-                const status =
-                  error instanceof HttpError ? error.status : undefined;
-                if (status === 404) return "対象の投稿が見つかりません。";
-                if (status === 403)
-                  return "この投稿を編集する権限がありません。";
-                if (status === 401) return "ログインが必要です。";
-                return "データの取得に失敗しました。時間をおいて再度お試しください。";
-              })()}
-            </CardDescription>
+            <CardDescription>{getErrorMessage(error)}</CardDescription>
           </CardContent>
         </Card>
       </main>
     );
   }
 
-  // hasDeleted時（削除成功後リダイレクト待ち）もスケルトンを出して静的に見せる
+  // 削除成功後もスケルトンを出して静的に見せる
   if (isLoading || !survey || hasDeleted) {
     return (
       <main className="container mx-auto px-4 py-8">
