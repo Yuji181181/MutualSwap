@@ -11,6 +11,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Form,
   FormControl,
   FormField,
@@ -227,42 +235,38 @@ export const EditSurveyPage: React.FC<{ id: string }> = (props) => {
           </Form>
         </CardContent>
       </Card>
-      {confirmingDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle id="delete-confirm-title">削除の確認</CardTitle>
-              <CardDescription>
-                本当にこの投稿を削除しますか？
-                <br />
-                この操作は取り消せません。
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-end gap-3 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setConfirmingDelete(false)}
-                  disabled={isDeleting}
-                >
-                  キャンセル
-                </Button>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  disabled={isDeleting}
-                  onClick={() => {
-                    void handleDelete();
-                  }}
-                >
-                  {isDeleting ? "削除中..." : "完全に削除する"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      <Dialog open={confirmingDelete} onOpenChange={setConfirmingDelete}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>削除の確認</DialogTitle>
+            <DialogDescription>
+              本当にこの投稿を削除しますか？
+              <br />
+              この操作は取り消せません。
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setConfirmingDelete(false)}
+              disabled={isDeleting}
+            >
+              キャンセル
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={isDeleting}
+              onClick={() => {
+                void handleDelete();
+              }}
+            >
+              {isDeleting ? "削除中..." : "完全に削除する"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 };
