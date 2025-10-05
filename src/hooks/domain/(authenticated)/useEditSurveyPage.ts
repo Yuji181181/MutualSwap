@@ -13,7 +13,7 @@ import type { ResBody } from "@/types/api";
 import type { DeleteSurveyResponse, Survey } from "@/types/api/survey";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
@@ -99,11 +99,6 @@ export const useEditSurveyPage = (id: string) => {
     deleteSurvey(url),
   );
 
-  // フォーム設定
-  const form = useForm<UpdateSurveyFormValues>({
-    resolver: zodResolver(updateSurveyFormSchema),
-  });
-
   // フォーム初期値の生成
   const defaults = useMemo(() => {
     if (!survey) return undefined;
@@ -117,10 +112,11 @@ export const useEditSurveyPage = (id: string) => {
     } satisfies Partial<UpdateSurveyFormValues> as UpdateSurveyFormValues;
   }, [survey]);
 
-  // フォーム初期値の設定
-  useEffect(() => {
-    if (defaults) form.reset(defaults);
-  }, [defaults, form.reset]);
+  // フォーム設定
+  const form = useForm<UpdateSurveyFormValues>({
+    resolver: zodResolver(updateSurveyFormSchema),
+    values: defaults,
+  });
 
   // 送信処理
   const handleSubmit = useCallback(
