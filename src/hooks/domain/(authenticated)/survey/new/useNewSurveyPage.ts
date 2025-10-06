@@ -83,7 +83,7 @@ export const useNewSurveyPage = () => {
         // 作成成功時の処理
         const id = created.id;
         if (id) {
-          router.push(`/survey/${id}?created=1`);
+          router.push(`/survey/${id}`);
         } else {
           router.push("/dashboard");
         }
