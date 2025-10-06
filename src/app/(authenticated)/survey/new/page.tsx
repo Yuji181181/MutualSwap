@@ -1,4 +1,4 @@
-import NewSurveyPage from "@/components/domain/(authenticated)/survey/NewSurveyPage";
+import NewSurveyPage from "@/components/domain/(authenticated)/survey/new/NewSurveyPage";
 
 const Page = async () => {
   return <NewSurveyPage />;

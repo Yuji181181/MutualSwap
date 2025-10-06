@@ -1,4 +1,4 @@
-import EditSurveyPage from "@/components/domain/(authenticated)/survey/EditSurveyPage";
+import EditSurveyPage from "@/components/domain/(authenticated)/survey/[id]/edit/EditSurveyPage";
 
 interface PageProps {
   params: Promise<{ id: string }>;

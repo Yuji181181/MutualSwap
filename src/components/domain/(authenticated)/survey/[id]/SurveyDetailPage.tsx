@@ -1,6 +1,6 @@
 "use client";
 
-import { SurveyDetailSkeleton } from "@/components/domain/(authenticated)/survey/SurveyDetailSkeleton";
+import { SurveyDetailSkeleton } from "@/components/domain/(authenticated)/survey/[id]/SurveyDetailSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useDetailSurveyPage } from "@/hooks/domain/(authenticated)/useDetailSurveyPage";
+import { useDetailSurveyPage } from "@/hooks/domain/(authenticated)/survey/[id]/useDetailSurveyPage";
 import { authClient } from "@/lib/auth-client";
 import { formatDate } from "@/lib/formatter";
 import { ExternalLink, Pencil } from "lucide-react";

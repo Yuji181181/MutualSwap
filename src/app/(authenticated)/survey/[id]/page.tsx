@@ -1,4 +1,4 @@
-import SurveyDetailPage from "@/components/domain/(authenticated)/survey/SurveyDetailPage";
+import SurveyDetailPage from "@/components/domain/(authenticated)/survey/[id]/SurveyDetailPage";
 
 interface PageProps {
   params: Promise<{ id: string }>;
