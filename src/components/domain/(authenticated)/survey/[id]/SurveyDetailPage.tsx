@@ -1,6 +1,6 @@
 "use client";
 
-import { SurveyDetailSkeleton } from "@/components/domain/(authenticated)/survey/SurveyDetailSkeleton";
+import { SurveyDetailSkeleton } from "@/components/domain/(authenticated)/survey/[id]/SurveyDetailSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,19 +10,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useDetailSurveyPage } from "@/hooks/domain/(authenticated)/useDetailSurveyPage";
+import { useDetailSurveyPage } from "@/hooks/domain/(authenticated)/survey/[id]/useDetailSurveyPage";
 import { authClient } from "@/lib/auth-client";
 import { formatDate } from "@/lib/formatter";
 import { ExternalLink, Pencil } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import type React from "react";
 
 export const SurveyDetailPage: React.FC<{ id: string }> = (props) => {
   const { survey, isLoading, isError } = useDetailSurveyPage({ id: props.id });
   const { data: session } = authClient.useSession();
-  const searchParams = useSearchParams();
-  const created = searchParams?.get("created") === "1";
-  const updated = searchParams?.get("updated") === "1";
 
   if (isError) {
     return (
@@ -51,11 +47,6 @@ export const SurveyDetailPage: React.FC<{ id: string }> = (props) => {
 
   return (
     <main className="container mx-auto px-4 py-8">
-      {(created || updated) && (
-        <div className="mx-auto mb-4 w-full max-w-2xl rounded-md border border-emerald-300/60 bg-emerald-50 px-4 py-2 text-emerald-700 text-sm">
-          {created ? "投稿を作成しました。" : "投稿を更新しました。"}
-        </div>
-      )}
       <Card className="transition-shadow hover:shadow-lg">
         <CardHeader>
           <div className="flex items-start justify-between">

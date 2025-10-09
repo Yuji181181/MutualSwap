@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useDashboardPage } from "@/hooks/domain/(authenticated)/useDashboardPage";
+import { useDashboardPage } from "@/hooks/domain/(authenticated)/dashboard/useDashboardPage";
 import { authClient } from "@/lib/auth-client";
 import type React from "react";
 

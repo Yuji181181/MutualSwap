@@ -131,7 +131,7 @@ export const useEditSurveyPage = (id: string) => {
         });
 
         // 更新成功時の処理
-        router.push(`/survey/${id}?updated=1`);
+        router.push(`/survey/${id}`);
         resetMutation();
       } catch (error) {
         // エラー処理は自動的にSWRのerror状態に反映される
