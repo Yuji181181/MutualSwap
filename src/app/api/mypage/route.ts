@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
 import type { ResBody } from "@/types/api";
-import type { MypageSurveyList } from "@/types/api/survey";
+import type { MypageData } from "@/types/api/survey";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { getMypageSurveys } from "../(Repository)/mypage";
+import { getMypageData } from "../(Repository)/mypage";
 
 export const GET = async () => {
   try {
@@ -19,11 +19,11 @@ export const GET = async () => {
       );
     }
 
-    // 認証されたユーザーの投稿のみを取得
-    const surveys = await getMypageSurveys(session.user.id);
+    // 認証されたユーザーの投稿とユーザー情報を取得
+    const data = await getMypageData(session.user.id);
 
-    return NextResponse.json<ResBody<MypageSurveyList>>(
-      { message: "Success", data: surveys },
+    return NextResponse.json<ResBody<MypageData>>(
+      { message: "Success", data },
       { status: 200 },
     );
   } catch (error) {

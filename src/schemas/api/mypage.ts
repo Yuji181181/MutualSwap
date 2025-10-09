@@ -20,3 +20,20 @@ export const mypageSurveySchema = z.object({
 });
 
 export const mypageSurveyListSchema = z.array(mypageSurveySchema);
+
+// マイページユーザー情報のスキーマ
+export const mypageUserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  grade: z.number().nullable(),
+  image: z.string().nullable(),
+  currentPoints: z.number(),
+  totalEarnedPoints: z.number(),
+  createdAt: z.date(),
+});
+
+// マイページデータ全体のスキーマ
+export const mypageDataSchema = z.object({
+  surveys: mypageSurveyListSchema,
+  user: mypageUserSchema.nullable(),
+});
