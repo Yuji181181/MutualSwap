@@ -6,9 +6,9 @@ export const deleteSurveyResponseSchema = z.object({
   description: z.string().nullable(),
   googleFormUrl: z.string(),
   questionCount: z.number(),
-  deadline: z.date().nullable(),
+  deadline: z.coerce.date().nullable(),
   isActive: z.boolean(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
   userId: z.string(),
 });

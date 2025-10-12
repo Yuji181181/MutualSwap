@@ -1,11 +1,18 @@
-export const formatDate = (date: Date | null) => {
+export const formatDate = (date: Date | string | null | undefined) => {
   if (!date) return "未設定";
   try {
-    return new Intl.DateTimeFormat("ja-JP", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(date);
+    // 文字列の場合はDateオブジェクトに変換
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+
+    // 無効な日付の場合
+    if (Number.isNaN(dateObj.getTime())) return "未設定";
+
+    // UTC時刻を使用してフォーマット（タイムゾーンの問題を回避）
+    const year = dateObj.getUTCFullYear();
+    const month = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getUTCDate()).padStart(2, "0");
+
+    return `${year}/${month}/${day}`;
   } catch {
     return "未設定";
   }
