@@ -9,7 +9,12 @@ import { getSurveys } from "../(Repository)/survey";
 
 export const GET = async () => {
   try {
-    const surveys = await getSurveys();
+    // セッションを取得してユーザーIDを渡す
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    const surveys = await getSurveys(session?.user?.id);
 
     return NextResponse.json<ResBody<SurveyList>>(
       { message: "Success", data: surveys },

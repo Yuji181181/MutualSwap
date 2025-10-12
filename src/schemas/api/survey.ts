@@ -11,6 +11,7 @@ export const surveyListSchema = z.array(
     isActive: z.boolean(),
     createdAt: z.date(),
     updatedAt: z.date(),
+    hasAnswered: z.boolean().optional(),
     user: z.object({
       id: z.string(),
       name: z.string(),

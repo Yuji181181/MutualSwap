@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-export const getSurveys = async () => {
+export const getSurveys = async (currentUserId?: string) => {
   const surveys = await prisma.survey.findMany({
     orderBy: { createdAt: "desc" },
     include: {
@@ -12,9 +12,21 @@ export const getSurveys = async () => {
           image: true,
         },
       },
+      surveyResponses: currentUserId
+        ? {
+            where: { userId: currentUserId },
+            select: { id: true },
+          }
+        : false,
     },
   });
-  return surveys;
+
+  // hasAnsweredフィールドを追加
+  return surveys.map((survey) => ({
+    ...survey,
+    hasAnswered: currentUserId ? survey.surveyResponses.length > 0 : false,
+    surveyResponses: undefined, // レスポンスから除外
+  }));
 };
 
 export const getSurveyById = async (id: string) => {
