@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatDate } from "@/lib/formatter";
 import type { MypageSurvey } from "@/types/api/survey";
-import { ExternalLink, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
@@ -96,18 +96,6 @@ export const MypageSurveyCard: React.FC<MypageSurveyCardProps> = (props) => {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(props.survey.googleFormUrl, "_blank");
-                }}
-                className="gap-1"
-                title="Googleフォームを新しいタブで開く"
-              >
-                <ExternalLink className="h-4 w-4" />
-                回答する
-              </Button>
               <Button
                 variant="outline"
                 size="sm"
