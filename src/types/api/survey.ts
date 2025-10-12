@@ -1,8 +1,10 @@
 import type { createSurveyRequestSchema } from "@/schemas/api/create";
 import type { deleteSurveyResponseSchema } from "@/schemas/api/deleteSurvey";
 import type {
+  mypageDataSchema,
   mypageSurveyListSchema,
   mypageSurveySchema,
+  mypageUserSchema,
 } from "@/schemas/api/mypage";
 import type { pointHistorySchema } from "@/schemas/api/point";
 import type { surveyListSchema, surveySchema } from "@/schemas/api/read";
@@ -21,6 +23,8 @@ export type CreateSurveyRequest = z.infer<typeof createSurveyRequestSchema>;
 export type CreateSurveyResponse = z.infer<typeof surveySchema>;
 export type MypageSurvey = z.infer<typeof mypageSurveySchema>;
 export type MypageSurveyList = z.infer<typeof mypageSurveyListSchema>;
+export type MypageUser = z.infer<typeof mypageUserSchema>;
+export type MypageData = z.infer<typeof mypageDataSchema>;
 export type DeleteSurveyResponse = z.infer<typeof deleteSurveyResponseSchema>;
 export type pointHistoryResponse = z.infer<typeof pointHistorySchema>;
 export type userRankingResponse = z.infer<typeof userRankingResponseSchema>;
