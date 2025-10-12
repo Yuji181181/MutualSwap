@@ -50,7 +50,7 @@ export const UserDropdown: React.FC<UserDropdownProps> = (props) => {
             src={props.user.image || undefined}
             alt={props.user.name || "ユーザー"}
           />
-          <AvatarFallback />
+          <AvatarFallback>{props.user.name.charAt(0)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

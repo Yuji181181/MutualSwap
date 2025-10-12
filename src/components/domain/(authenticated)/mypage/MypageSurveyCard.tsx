@@ -61,7 +61,9 @@ export const MypageSurveyCard: React.FC<MypageSurveyCardProps> = (props) => {
                 <AvatarImage
                   src={props.survey.user.image ?? "/placeholder.svg"}
                 />
-                <AvatarFallback />
+                <AvatarFallback>
+                  {props.survey.user.name.charAt(0)}
+                </AvatarFallback>
               </Avatar>
               <div>
                 <div className="flex items-center gap-2">

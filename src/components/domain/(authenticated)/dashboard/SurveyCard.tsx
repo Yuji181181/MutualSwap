@@ -38,7 +38,9 @@ export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
               <AvatarImage
                 src={props.survey.user.image ?? "/placeholder.svg"}
               />
-              <AvatarFallback />
+              <AvatarFallback>
+                {props.survey.user.name.charAt(0)}
+              </AvatarFallback>
             </Avatar>
             <div>
               <CardTitle className="text-balance text-lg">
