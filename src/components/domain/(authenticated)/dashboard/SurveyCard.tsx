@@ -23,7 +23,8 @@ interface SurveyCardProps {
 
 export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
   const router = useRouter();
-  const canEdit = props.currentUserId === props.survey.user.id;
+  const isOwnSurvey = props.currentUserId === props.survey.user.id;
+  const hasAnswered = props.survey.hasAnswered ?? false;
   return (
     <Card
       key={props.survey.id}
@@ -70,19 +71,22 @@ export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(props.survey.googleFormUrl, "_blank");
-              }}
-              className="gap-1"
-              title="Googleフォームを新しいタブで開く"
-            >
-              <ExternalLink className="h-4 w-4" />
-              回答する
-            </Button>
-            {canEdit && (
+            {!isOwnSurvey && (
+              <Button
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/survey/${props.survey.id}/answer`);
+                }}
+                className="gap-1"
+                title={hasAnswered ? "回答済みです" : "アンケートに回答する"}
+                disabled={hasAnswered}
+              >
+                <ExternalLink className="h-4 w-4" />
+                {hasAnswered ? "回答済み" : "回答する"}
+              </Button>
+            )}
+            {isOwnSurvey && (
               <Button
                 variant="outline"
                 size="sm"
