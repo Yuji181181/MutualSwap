@@ -1,5 +1,16 @@
 import { prisma } from "@/lib/prisma";
 
+// 質問数に応じたポイントを計算
+const calculatePoints = (questionCount: number): number => {
+  if (questionCount <= 5) {
+    return 2;
+  }
+  if (questionCount <= 10) {
+    return 3;
+  }
+  return 4;
+};
+
 // 回答記録を作成
 export const createSurveyResponse = async (
   userId: string,
@@ -14,7 +25,7 @@ export const createSurveyResponse = async (
     throw new Error("Survey not found");
   }
 
-  const pointsEarned = survey.questionCount;
+  const pointsEarned = calculatePoints(survey.questionCount);
 
   // 回答記録とポイント付与をトランザクションで実行
   const result = await prisma.$transaction(async (tx) => {
