@@ -65,6 +65,15 @@ export const POST = async (request: Request) => {
   } catch (error) {
     console.error(error);
 
+    if (error instanceof Error) {
+      if (error.message.includes("ポイントが不足")) {
+        return NextResponse.json<ResBody<undefined>>(
+          { message: error.message },
+          { status: 400 },
+        );
+      }
+    }
+
     return NextResponse.json<ResBody<undefined>>(
       { message: "Internal Server Error" },
       { status: 500 },

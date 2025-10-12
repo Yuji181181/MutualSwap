@@ -7,8 +7,8 @@ export const userRankingResponseSchema = z.array(
     grade: z.number().nullable(),
     currentPoints: z.number(),
     totalEarnedPoints: z.number(),
-    createdAt: z.date(),
-    updatedAt: z.date(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     image: z.string().nullable(),
   }),
 );
