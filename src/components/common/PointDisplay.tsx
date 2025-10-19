@@ -56,9 +56,11 @@ export const PointDisplay: React.FC<PointDisplayProps> = ({
   }
 
   return (
-    <div className="flex items-center gap-2 rounded-lg bg-secondary/10 px-3 py-2">
+    <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-secondary/20 to-accent/20 px-4 py-2 shadow-md backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-lg">
       <Coins className="h-5 w-5 text-secondary" />
-      <span className="font-semibold text-foreground">{points}pt</span>
+      <span className="bg-gradient-to-r from-secondary to-accent bg-clip-text font-bold text-transparent">
+        {points}pt
+      </span>
     </div>
   );
 };

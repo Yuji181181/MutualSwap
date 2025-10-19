@@ -11,6 +11,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSurveyAnswerPage } from "@/hooks/domain/(authenticated)/survey/[id]/answer/useSurveyAnswerPage";
 import type React from "react";
+import { useEffect } from "react";
 
 interface SurveyAnswerPageProps {
   surveyId: string;
@@ -29,6 +30,10 @@ const SurveyAnswerPage: React.FC<SurveyAnswerPageProps> = (props) => {
   } = useSurveyAnswerPage({
     id: props.surveyId,
   });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (isError) {
     return (
