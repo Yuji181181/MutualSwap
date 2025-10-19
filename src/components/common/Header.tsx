@@ -2,9 +2,10 @@
 
 import { useUser } from "@/app/actions/useUser";
 import { userAuthenticationCheck } from "@/app/actions/userAuthenticationCheck";
+import { PointDisplay } from "@/components/common/PointDisplay";
 import { UserDropdown } from "@/components/common/UserDropdown";
 import { Separator } from "@/components/ui/separator";
-import { Coins, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import Link from "next/link";
@@ -32,12 +33,7 @@ export default async function Header() {
           {user && (
             <div className="flex items-center gap-4">
               {/* ポイント表示 */}
-              <div className="flex items-center gap-2 rounded-lg bg-secondary/10 px-3 py-2">
-                <Coins className="h-5 w-5 text-secondary" />
-                <span className="font-semibold text-foreground">
-                  {user.currentPoints}pt
-                </span>
-              </div>
+              <PointDisplay initialPoints={user.currentPoints} />
 
               <div className="flex items-center gap-3">
                 <Separator orientation="vertical" className="h-8" />

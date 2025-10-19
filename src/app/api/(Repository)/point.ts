@@ -1,5 +1,13 @@
 import { prisma } from "@/lib/prisma";
 
+export const getUserPoints = async (id: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id },
+    select: { currentPoints: true },
+  });
+  return user?.currentPoints ?? 0;
+};
+
 export const getPointsHistory = async (id: string) => {
   const pointsHistory = await prisma.pointTransaction.findMany({
     where: { userId: id },

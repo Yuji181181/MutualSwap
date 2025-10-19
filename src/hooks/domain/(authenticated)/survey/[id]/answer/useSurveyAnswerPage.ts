@@ -55,7 +55,7 @@ export const useSurveyAnswerPage = (props: { id: string }) => {
         alert(
           `${data.message}\n${data.data.pointsEarned}ポイント獲得しました！`,
         );
-        router.push("/dashboard");
+        router.push("/dashboard?refresh=true");
       } else if (response.status === 409) {
         alert("既に回答済みです");
         router.push("/dashboard");
