@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+export const userPointsSchema = z.object({
+  currentPoints: z.number(),
+});
+
 export const userRankingResponseSchema = z.array(
   z.object({
     id: z.string(),
