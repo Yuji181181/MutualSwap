@@ -9,11 +9,15 @@ export const useDashboardPage = () => {
   const searchParams = useSearchParams();
   const shouldRefresh = searchParams.get("refresh");
 
-  const swrKey = useMemo(
-    () =>
-      shouldRefresh === "true" ? "/api/survey?refresh=true" : "/api/survey",
-    [shouldRefresh],
-  );
+  // タイムスタンプをキーに含めることで、SWRに異なるリクエストとして認識させる
+  // これにより、バックエンドを変更せずにキャッシュバストが可能
+  const swrKey = useMemo(() => {
+    if (shouldRefresh === "true") {
+      // refreshパラメータがある場合、タイムスタンプを付けて強制的に再取得
+      return `/api/survey?_t=${Date.now()}`;
+    }
+    return "/api/survey";
+  }, [shouldRefresh]);
 
   const { data, isLoading, isError, error, mutate } = useCustomizedSWR(
     swrKey,

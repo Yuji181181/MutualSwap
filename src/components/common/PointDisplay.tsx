@@ -18,13 +18,15 @@ export const PointDisplay: React.FC<PointDisplayProps> = ({
   const searchParams = useSearchParams();
   const shouldRefresh = searchParams.get("refresh");
 
-  // SWRのキーにrefreshパラメータを含めることで、
-  // パラメータが変わると自動的にキーが変わり、再フェッチがトリガーされる
-  const swrKey = useMemo(
-    () =>
-      shouldRefresh === "true" ? "/api/points?refresh=true" : "/api/points",
-    [shouldRefresh],
-  );
+  // タイムスタンプをキーに含めることで、SWRに異なるリクエストとして認識させる
+  // これにより、バックエンドを変更せずにキャッシュバストが可能
+  const swrKey = useMemo(() => {
+    if (shouldRefresh === "true") {
+      // refreshパラメータがある場合、タイムスタンプを付けて強制的に再取得
+      return `/api/points?_t=${Date.now()}`;
+    }
+    return "/api/points";
+  }, [shouldRefresh]);
 
   const { data, isLoading, isError } = useCustomizedSWR(
     swrKey,
