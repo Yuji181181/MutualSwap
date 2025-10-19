@@ -58,7 +58,6 @@ const MypagePage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-accent/5 via-50% via-background to-primary/5">
       <main className="container mx-auto max-w-4xl px-4 py-8">
         <div className="space-y-6">
-          {/* プロフィールヘッダー */}
           {isLoading || !user ? (
             <ProfileHeaderSkeleton />
           ) : (
@@ -76,7 +75,6 @@ const MypagePage: React.FC = () => {
 
           <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
 
-          {/* 投稿一覧セクション */}
           <div className="space-y-4">
             <h2 className="bg-gradient-to-r from-primary to-accent bg-clip-text font-semibold text-transparent text-xl">
               投稿

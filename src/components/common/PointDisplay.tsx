@@ -19,10 +19,8 @@ export const PointDisplay: React.FC<PointDisplayProps> = ({
   const shouldRefresh = searchParams.get("refresh");
 
   // タイムスタンプをキーに含めることで、SWRに異なるリクエストとして認識させる
-  // これにより、バックエンドを変更せずにキャッシュバストが可能
   const swrKey = useMemo(() => {
     if (shouldRefresh === "true") {
-      // refreshパラメータがある場合、タイムスタンプを付けて強制的に再取得
       return `/api/points?_t=${Date.now()}`;
     }
     return "/api/points";
@@ -35,7 +33,6 @@ export const PointDisplay: React.FC<PointDisplayProps> = ({
 
   const points = data?.currentPoints ?? initialPoints;
 
-  // エラー状態の表示
   if (isError) {
     return (
       <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2">
@@ -45,7 +42,6 @@ export const PointDisplay: React.FC<PointDisplayProps> = ({
     );
   }
 
-  // ローディング状態の表示(初回のみ、またはrefresh時)
   if (isLoading && !data) {
     return (
       <div className="flex items-center gap-2 rounded-lg bg-secondary/10 px-3 py-2">

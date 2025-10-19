@@ -34,7 +34,6 @@ export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
       className={`group hover:-translate-y-1 cursor-pointer border-2 transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 ${
         isInactive ? "bg-muted/30 opacity-70" : "bg-card/80 backdrop-blur-sm"
       }`}
-      onClick={() => router.push(`/survey/${props.survey.id}`)}
       tabIndex={0}
     >
       <CardHeader className="relative">
