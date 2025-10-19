@@ -8,9 +8,9 @@ export default function AuthenticatedLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <div className="flex-1 pt-4">{children}</div>
+      <div className="flex-1">{children}</div>
       <FabCreateButton />
     </div>
   );

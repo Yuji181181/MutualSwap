@@ -15,19 +15,27 @@ const FabCreateButton: React.FC = () => {
           "right-6",
           "bottom-6",
           "z-50",
-          "w-14",
-          "h-14",
+          "h-16",
+          "w-16",
           "rounded-full",
+          "bg-gradient-to-br",
+          "from-primary",
+          "to-secondary",
           "p-0",
-          "shadow-lg",
-          "transition-transform",
-          "hover:scale-105",
+          "shadow-2xl",
+          "shadow-primary/30",
+          "transition-all",
+          "duration-300",
+          "hover:scale-110",
+          "hover:shadow-3xl",
+          "hover:shadow-primary/40",
+          "active:scale-95",
         )}
         aria-label="新規投稿"
         title="新規投稿"
       >
         <span className="sr-only">新規投稿</span>
-        <Plus className="h-7 w-7" />
+        <Plus className="h-8 w-8" />
       </Button>
     </Link>
   );

@@ -34,14 +34,17 @@ const MypagePage: React.FC = () => {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-destructive/5 via-50% via-background to-destructive/10">
         <main className="container mx-auto max-w-4xl px-4 py-8">
-          <Card>
+          <Card className="border-2 border-destructive/20 bg-card/90 shadow-2xl backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-balance text-lg">エラー</CardTitle>
+              <CardTitle className="flex items-center gap-2 text-balance text-destructive text-lg">
+                <span className="text-2xl">⚠️</span>
+                エラーが発生しました
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription>
+              <CardDescription className="text-base">
                 データの取得に失敗しました。時間をおいて再度お試しください。
               </CardDescription>
             </CardContent>
@@ -52,7 +55,7 @@ const MypagePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-accent/5 via-50% via-background to-primary/5">
       <main className="container mx-auto max-w-4xl px-4 py-8">
         <div className="space-y-6">
           {/* プロフィールヘッダー */}
@@ -71,11 +74,13 @@ const MypagePage: React.FC = () => {
             />
           )}
 
-          <Separator />
+          <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
 
           {/* 投稿一覧セクション */}
           <div className="space-y-4">
-            <h2 className="font-semibold text-xl">投稿</h2>
+            <h2 className="bg-gradient-to-r from-primary to-accent bg-clip-text font-semibold text-transparent text-xl">
+              投稿
+            </h2>
             <div className="grid gap-6">
               {isLoading
                 ? [...Array(3)].map((_, index) => (
@@ -91,10 +96,11 @@ const MypagePage: React.FC = () => {
                       />
                     ))
                   : !isLoading && (
-                      <Card>
+                      <Card className="border-2 border-muted border-dashed bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-primary/30 hover:bg-card/80">
                         <CardContent className="py-12 text-center">
-                          <CardDescription>
-                            まだ投稿がありません。最初の投稿を作成しましょう！
+                          <div className="mb-4 text-6xl">📝</div>
+                          <CardDescription className="text-base">
+                            まだ投稿がありません。最初の投稿を作成しましょう!
                           </CardDescription>
                         </CardContent>
                       </Card>
