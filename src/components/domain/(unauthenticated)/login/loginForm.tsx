@@ -145,24 +145,24 @@ export default function LoginForm() {
               掲示板に投稿されている他のユーザーのアンケートに回答しましょう。
               <br />
               回答するアンケートの設問数に応じたポイントを獲得できます。
-              <div className="mt-4 rounded-lg border-2 border-secondary/20 bg-secondary/10 p-4">
-                <div className="flex items-start gap-3">
-                  <Sparkles className="mt-1 h-5 w-5 flex-shrink-0 text-secondary" />
-                  <div>
-                    <p className="font-semibold text-foreground text-sm">
-                      獲得できるポイントについて
-                    </p>
-                    <p className="mt-1 text-muted-foreground text-sm">
-                      設問数1~5：2ポイント
-                      <br />
-                      設問数6~10：3ポイント
-                      <br />
-                      設問数11~：4ポイント
-                    </p>
-                  </div>
+            </p>
+            <div className="mt-4 rounded-lg border-2 border-secondary/20 bg-secondary/10 p-4">
+              <div className="flex items-start gap-3">
+                <Sparkles className="mt-1 h-5 w-5 flex-shrink-0 text-secondary" />
+                <div>
+                  <p className="font-semibold text-foreground text-sm">
+                    獲得できるポイントについて
+                  </p>
+                  <p className="mt-1 text-muted-foreground text-sm">
+                    設問数1~5：2ポイント
+                    <br />
+                    設問数6~10：3ポイント
+                    <br />
+                    設問数11~：4ポイント
+                  </p>
                 </div>
               </div>
-            </p>
+            </div>
             <div className="mt-4 flex flex-wrap gap-2">
               <span className="rounded-lg bg-muted px-3 py-1.5 text-muted-foreground text-sm">
                 🎯 興味のあるアンケートを選ぶ
