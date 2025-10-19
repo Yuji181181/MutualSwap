@@ -36,19 +36,28 @@ export default function LoginForm() {
             </div>
           </div>
           <h1 className="mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text font-bold text-5xl text-transparent">
-            アンケート共有掲示板
+            MutualSwap
           </h1>
           <p className="mx-auto max-w-2xl text-muted-foreground text-xl leading-relaxed">
-            コミュニティでアンケートを共有し、相互回答でポイントを獲得。
+            Google Formで作成したアンケートを共有する掲示板
             <br />
-            より多くの回答を集めるための新しいプラットフォーム。
+            相互にアンケートを回答し合うことができる新しいプラットフォーム
           </p>
+          <Button
+            onClick={handleLogin}
+            size="lg"
+            className="mt-8 gap-2 bg-gradient-to-r from-primary to-secondary px-8 py-6 font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <Users className="h-5 w-5" />
+            Googleでログイン
+            <ArrowRight className="h-5 w-5" />
+          </Button>
         </div>
 
         {/* How It Works Section */}
         <div className="mb-16">
           <h2 className="mb-12 text-center font-bold text-3xl text-foreground">
-            使い方はシンプル
+            使い方
           </h2>
 
           <div className="space-y-12">
@@ -60,7 +69,7 @@ export default function LoginForm() {
               <div className="flex-1">
                 <div className="mb-2 flex items-center gap-3">
                   <span className="rounded-full bg-primary/10 px-3 py-1 font-bold text-primary text-sm">
-                    STEP 1
+                    1
                   </span>
                   <h3 className="font-bold text-2xl text-foreground">
                     アンケートを投稿
@@ -70,14 +79,14 @@ export default function LoginForm() {
                   Google
                   Formで作成したアンケートのリンクを掲示板に投稿しましょう。
                   <br />
-                  タイトルや説明を追加して、回答者に内容を伝えます。
+                  アンケートの投稿にポイントは不要です。
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-lg bg-muted px-3 py-1.5 text-muted-foreground text-sm">
-                    📝 Google Formのリンクを貼る
+                    📝 作成したGoogle FormのURLを貼る
                   </span>
                   <span className="rounded-lg bg-muted px-3 py-1.5 text-muted-foreground text-sm">
-                    ⏱️ 回答期限を設定
+                    ⏱️ 設問数、回答期限を設定
                   </span>
                 </div>
               </div>
@@ -87,99 +96,28 @@ export default function LoginForm() {
 
             {/* Step 2 */}
             <div className="flex gap-6">
-              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/10">
-                <MessageSquare className="h-8 w-8 text-secondary" />
-              </div>
-              <div className="flex-1">
-                <div className="mb-2 flex items-center gap-3">
-                  <span className="rounded-full bg-secondary/10 px-3 py-1 font-bold text-secondary text-sm">
-                    STEP 2
-                  </span>
-                  <h3 className="font-bold text-2xl text-foreground">
-                    他のアンケートに回答
-                  </h3>
-                </div>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  掲示板に投稿されている他のユーザーのアンケートに回答しましょう。
-                  <br />
-                  回答することでポイントを獲得できます。
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="rounded-lg bg-muted px-3 py-1.5 text-muted-foreground text-sm">
-                    🎯 興味のあるアンケートを選ぶ
-                  </span>
-                  <span className="rounded-lg bg-muted px-3 py-1.5 text-muted-foreground text-sm">
-                    ✅ 回答してポイント獲得
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <Separator className="my-8" />
-
-            {/* Step 3 */}
-            <div className="flex gap-6">
-              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/20 to-accent/10">
-                <Coins className="h-8 w-8 text-accent" />
-              </div>
-              <div className="flex-1">
-                <div className="mb-2 flex items-center gap-3">
-                  <span className="rounded-full bg-accent/10 px-3 py-1 font-bold text-accent text-sm">
-                    STEP 3
-                  </span>
-                  <h3 className="font-bold text-2xl text-foreground">
-                    ポイントで公開
-                  </h3>
-                </div>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  獲得したポイントを使って、自分のアンケートを公開状態にします。
-                  <br />
-                  公開されたアンケートは掲示板のトップに表示されます。
-                </p>
-                <div className="mt-4 rounded-lg border-2 border-accent/20 bg-accent/5 p-4">
-                  <div className="flex items-start gap-3">
-                    <Sparkles className="mt-1 h-5 w-5 flex-shrink-0 text-accent" />
-                    <div>
-                      <p className="font-semibold text-foreground text-sm">
-                        ポイント制度について
-                      </p>
-                      <p className="mt-1 text-muted-foreground text-sm">
-                        所有ポイント数によって、アンケートの公開状態が自動的に変わります。
-                        より多くのアンケートに回答して、自分のアンケートを多くの人に見てもらいましょう！
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Separator className="my-8" />
-
-            {/* Step 4 */}
-            <div className="flex gap-6">
               <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20">
                 <CheckCircle2 className="h-8 w-8 text-primary" />
               </div>
               <div className="flex-1">
                 <div className="mb-2 flex items-center gap-3">
                   <span className="rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 px-3 py-1 font-bold text-primary text-sm">
-                    STEP 4
+                    2
                   </span>
                   <h3 className="font-bold text-2xl text-foreground">
-                    回答を集める
+                    他のユーザーに回答してもらう
                   </h3>
                 </div>
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  公開されたアンケートは、コミュニティのみんなが回答してくれます。
                   <br />
-                  より多くの回答を集めて、質の高いデータを収集しましょう。
+                  投稿したアンケートは掲示板に表示され、他のユーザーが回答できます。
+                  <br />
+                  他のユーザーに回答をしてもらうと、投稿者のポイントが1ポイント減ります。
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-lg bg-muted px-3 py-1.5 text-muted-foreground text-sm">
-                    📊 回答数をリアルタイムで確認
-                  </span>
-                  <span className="rounded-lg bg-muted px-3 py-1.5 text-muted-foreground text-sm">
-                    🔄 相互に助け合うコミュニティ
+                    📊
+                    投稿者は他ユーザーに回答してもらうことで自分のポイントを消費します。
                   </span>
                 </div>
               </div>
@@ -187,74 +125,82 @@ export default function LoginForm() {
           </div>
         </div>
 
-        {/* Benefits Section */}
-        <div className="mb-16">
-          <h2 className="mb-8 text-center font-bold text-3xl text-foreground">
-            このプラットフォームの特徴
-          </h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="text-center">
-              <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-                <span className="text-3xl">🤝</span>
-              </div>
-              <h3 className="mb-2 font-semibold text-foreground text-lg">
-                相互扶助の仕組み
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                お互いにアンケートに答え合うことで、全員が必要な回答数を集められます
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10">
-                <span className="text-3xl">⚡</span>
-              </div>
-              <h3 className="mb-2 font-semibold text-foreground text-lg">
-                素早い回答収集
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                アクティブなコミュニティで、短時間で多くの回答を集めることができます
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10">
-                <span className="text-3xl">🎯</span>
-              </div>
-              <h3 className="mb-2 font-semibold text-foreground text-lg">
-                公平なシステム
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                ポイント制度により、貢献度に応じた公平な機会が得られます
-              </p>
-            </div>
-          </div>
-        </div>
+        <Separator className="my-8" />
 
-        {/* CTA Section */}
-        <div className="mb-8 text-center">
-          <div className="mx-auto max-w-2xl rounded-3xl border-2 border-primary/20 bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-8 shadow-xl backdrop-blur-sm">
-            <h2 className="mb-4 font-bold text-3xl text-foreground">
-              さあ、始めましょう
-            </h2>
-            <p className="mb-6 text-lg text-muted-foreground">
-              Googleアカウントでログインして、
+        {/* Step 3 */}
+        <div className="flex gap-6">
+          <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/10">
+            <MessageSquare className="h-8 w-8 text-secondary" />
+          </div>
+          <div className="flex-1">
+            <div className="mb-2 flex items-center gap-3">
+              <span className="rounded-full bg-secondary/10 px-3 py-1 font-bold text-secondary text-sm">
+                3
+              </span>
+              <h3 className="font-bold text-2xl text-foreground">
+                他のユーザーのアンケートに回答し、ポイント獲得する
+              </h3>
+            </div>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              掲示板に投稿されている他のユーザーのアンケートに回答しましょう。
               <br />
-              今すぐアンケート共有を始めましょう
+              回答するアンケートの設問数に応じたポイントを獲得できます。
+              <div className="mt-4 rounded-lg border-2 border-secondary/20 bg-secondary/10 p-4">
+                <div className="flex items-start gap-3">
+                  <Sparkles className="mt-1 h-5 w-5 flex-shrink-0 text-secondary" />
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">
+                      獲得できるポイントについて
+                    </p>
+                    <p className="mt-1 text-muted-foreground text-sm">
+                      設問数1~5：2ポイント
+                      <br />
+                      設問数6~10：3ポイント
+                      <br />
+                      設問数11~：4ポイント
+                    </p>
+                  </div>
+                </div>
+              </div>
             </p>
-            <Button
-              onClick={handleLogin}
-              size="lg"
-              className="gap-2 bg-gradient-to-r from-primary to-secondary px-8 py-6 font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-            >
-              <Users className="h-5 w-5" />
-              Googleでログイン
-              <ArrowRight className="h-5 w-5" />
-            </Button>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="rounded-lg bg-muted px-3 py-1.5 text-muted-foreground text-sm">
+                🎯 興味のあるアンケートを選ぶ
+              </span>
+              <span className="rounded-lg bg-muted px-3 py-1.5 text-muted-foreground text-sm">
+                ✅ 回答してポイント獲得
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center text-muted-foreground text-sm">
-          <p>アカウント作成は無料です。今すぐ始めましょう！</p>
+        <Separator className="my-8" />
+
+        {/* Step 4 */}
+        <div className="flex gap-6">
+          <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/20 to-accent/10">
+            <Coins className="h-8 w-8 text-accent" />
+          </div>
+          <div className="flex-1">
+            <div className="mb-2 flex items-center gap-3">
+              <span className="rounded-full bg-accent/10 px-3 py-1 font-bold text-accent text-sm">
+                4
+              </span>
+              <h3 className="font-bold text-2xl text-foreground">
+                ポイントを獲得し続け、アンケートを公開状態に保つ
+              </h3>
+            </div>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              所有ポイント数が0ポイントの場合、投稿したアンケートは非公開状態になります。
+              <br />
+              他のユーザーに自分のアンケートを回答してもらうためにも、積極的に他のユーザーのアンケートに回答してポイントを獲得しましょう。
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="rounded-lg bg-muted px-3 py-1.5 text-muted-foreground text-sm">
+                🔄 相互に回答し合う
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
