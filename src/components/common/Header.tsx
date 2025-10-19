@@ -25,7 +25,7 @@ export default async function Header() {
             </div>
             <Link href="/">
               <h1 className="cursor-pointer bg-gradient-to-r from-primary to-secondary bg-clip-text font-bold text-2xl text-transparent transition-all duration-300 hover:opacity-80">
-                アンケート共有掲示板
+                MutualSwap
               </h1>
             </Link>
           </div>

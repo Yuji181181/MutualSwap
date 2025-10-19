@@ -10,7 +10,6 @@ export const useDashboardPage = () => {
   const shouldRefresh = searchParams.get("refresh");
 
   // タイムスタンプをキーに含めることで、SWRに異なるリクエストとして認識させる
-  // これにより、バックエンドを変更せずにキャッシュバストが可能
   const swrKey = useMemo(() => {
     if (shouldRefresh === "true") {
       // refreshパラメータがある場合、タイムスタンプを付けて強制的に再取得

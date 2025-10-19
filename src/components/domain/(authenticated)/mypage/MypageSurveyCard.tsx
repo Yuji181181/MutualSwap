@@ -55,7 +55,6 @@ export const MypageSurveyCard: React.FC<MypageSurveyCardProps> = (props) => {
         tabIndex={0}
       >
         <CardHeader className="relative">
-          {/* Gradient overlay on hover */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden bg-gradient-to-r from-primary/0 via-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
           <div className="relative flex items-start justify-between">

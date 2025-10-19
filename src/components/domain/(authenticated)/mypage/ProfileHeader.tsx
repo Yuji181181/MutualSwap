@@ -31,9 +31,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
             </AvatarFallback>
           </Avatar>
 
-          {/* ユーザー情報 */}
           <div className="flex flex-1 flex-col gap-4">
-            {/* 名前と学年 */}
             <div className="flex flex-col gap-2">
               <h1 className="bg-gradient-to-r from-primary to-secondary bg-clip-text font-bold text-2xl text-transparent">
                 {props.user.name}
@@ -50,7 +48,6 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
 
             <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
 
-            {/* 統計情報 */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1 rounded-xl bg-primary/5 p-4 transition-all duration-300 hover:bg-primary/10">
                 <div className="flex items-center gap-1.5 text-muted-foreground text-sm">

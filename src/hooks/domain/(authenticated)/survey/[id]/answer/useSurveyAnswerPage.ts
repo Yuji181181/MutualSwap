@@ -11,7 +11,6 @@ export const useSurveyAnswerPage = (props: { id: string }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const hasOpenedFormRef = useRef(false);
 
-  // アンケート情報を取得
   const {
     data: survey,
     isLoading: isSurveyLoading,
@@ -32,7 +31,7 @@ export const useSurveyAnswerPage = (props: { id: string }) => {
   const hasAnswered = answerStatus?.hasAnswered ?? false;
   const isLoading = isSurveyLoading || isStatusLoading;
 
-  // Googleフォームを別タブで開く（1回だけ、開発モードでも1回のみ）
+  // Googleフォームを別タブで開く
   useEffect(() => {
     if (survey && !hasOpenedFormRef.current && !isLoading && !hasAnswered) {
       window.open(survey.googleFormUrl, "_blank");
@@ -70,14 +69,12 @@ export const useSurveyAnswerPage = (props: { id: string }) => {
     }
   };
 
-  // フォームを再度開く
   const handleReopenForm = () => {
     if (survey) {
       window.open(survey.googleFormUrl, "_blank");
     }
   };
 
-  // キャンセル
   const handleCancel = () => {
     router.back();
   };
