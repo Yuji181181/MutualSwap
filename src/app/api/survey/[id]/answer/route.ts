@@ -107,6 +107,25 @@ export const POST = async (
     );
   } catch (error) {
     console.error(error);
+
+    if (error instanceof Error) {
+      if (
+        error.message.includes("回答受付を終了") ||
+        error.message.includes("ポイントが不足")
+      ) {
+        return NextResponse.json<ResBody<undefined>>(
+          { message: error.message },
+          { status: 400 },
+        );
+      }
+      if (error.message.includes("見つかりません")) {
+        return NextResponse.json<ResBody<undefined>>(
+          { message: error.message },
+          { status: 404 },
+        );
+      }
+    }
+
     return NextResponse.json<ResBody<undefined>>(
       { message: "Internal Server Error" },
       { status: 500 },

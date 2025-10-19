@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,10 +26,14 @@ export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
   const router = useRouter();
   const isOwnSurvey = props.currentUserId === props.survey.user.id;
   const hasAnswered = props.survey.hasAnswered ?? false;
+  const isInactive = !props.survey.isActive;
+
   return (
     <Card
       key={props.survey.id}
-      className="cursor-pointer transition-shadow hover:shadow-lg"
+      className={`cursor-pointer transition-shadow hover:shadow-lg ${
+        isInactive ? "bg-muted/50 opacity-60" : ""
+      }`}
       onClick={() => router.push(`/survey/${props.survey.id}`)}
       tabIndex={0}
     >
@@ -44,9 +49,16 @@ export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
               </AvatarFallback>
             </Avatar>
             <div>
-              <CardTitle className="text-balance text-lg">
-                <span>{props.survey.title}</span>
-              </CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-balance text-lg">
+                  <span>{props.survey.title}</span>
+                </CardTitle>
+                {isInactive && (
+                  <Badge variant="secondary" className="text-xs">
+                    回答受付終了
+                  </Badge>
+                )}
+              </div>
               <div className="mt-1 flex items-center gap-2">
                 <span className="text-muted-foreground text-sm">
                   {props.survey.user.name}
@@ -79,8 +91,14 @@ export const SurveyCard: React.FC<SurveyCardProps> = (props) => {
                   router.push(`/survey/${props.survey.id}/answer`);
                 }}
                 className="gap-1"
-                title={hasAnswered ? "回答済みです" : "アンケートに回答する"}
-                disabled={hasAnswered}
+                title={
+                  isInactive
+                    ? "回答受付終了"
+                    : hasAnswered
+                      ? "回答済みです"
+                      : "アンケートに回答する"
+                }
+                disabled={hasAnswered || isInactive}
               >
                 <ExternalLink className="h-4 w-4" />
                 {hasAnswered ? "回答済み" : "回答する"}

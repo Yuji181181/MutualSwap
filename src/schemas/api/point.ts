@@ -8,6 +8,6 @@ export const pointHistorySchema = z.array(
     transactionType: z.enum(["initial", "earned", "spent"]),
     points: z.number(),
     description: z.string().nullable(),
-    createdAt: z.date(),
+    createdAt: z.coerce.date(),
   }),
 );
