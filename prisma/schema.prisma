@@ -11,8 +11,8 @@ model User {
   id                String   @id @default(uuid())
   name              String   @db.VarChar(50)
   grade             Int?
-  currentPoints     Int      @default(5)
-  totalEarnedPoints Int      @default(5)
+  currentPoints     Int      @default(8)
+  totalEarnedPoints Int      @default(8)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   email             String
