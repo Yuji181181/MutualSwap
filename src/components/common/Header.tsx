@@ -5,8 +5,10 @@ import { userAuthenticationCheck } from "@/app/actions/userAuthenticationCheck";
 import { PointDisplay } from "@/components/common/PointDisplay";
 import { UserDropdown } from "@/components/common/UserDropdown";
 import { Separator } from "@/components/ui/separator";
-import { Users } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Coins, Users } from "lucide-react";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import Link from "next/link";
 
@@ -33,7 +35,9 @@ export default async function Header() {
           {user && (
             <div className="flex items-center gap-4">
               {/* ポイント表示 */}
-              <PointDisplay initialPoints={user.currentPoints} />
+              <Suspense fallback={<PointDisplaySkeleton />}>
+                <PointDisplay initialPoints={user.currentPoints} />
+              </Suspense>
 
               <div className="flex items-center gap-3">
                 <Separator orientation="vertical" className="h-8" />
@@ -46,3 +50,13 @@ export default async function Header() {
     </header>
   );
 }
+
+// ポイント表示のスケルトン
+const PointDisplaySkeleton = () => {
+  return (
+    <div className="flex items-center gap-2 rounded-lg bg-secondary/10 px-3 py-2">
+      <Coins className="h-5 w-5 text-secondary" />
+      <Skeleton className="h-5 w-12" />
+    </div>
+  );
+};
