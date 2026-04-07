@@ -4,7 +4,7 @@ import { prisma } from "./lib/prisma";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
-    provider: "postgresql",
+    provider: "mysql",
   }),
   // Google oauthを設定する
   socialProviders: {

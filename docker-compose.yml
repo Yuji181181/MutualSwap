@@ -6,7 +6,7 @@ services:
   #   depends_on:
   #     - db
   #   environment:
-  #     DATABASE_URL: postgresql://root:root@db:5432/db?schema=public
+  #     DATABASE_URL: mysql://root:root@127.0.0.1:4000/db
 
   db:
     image: postgres:16
